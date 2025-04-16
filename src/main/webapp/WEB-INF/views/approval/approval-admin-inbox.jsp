@@ -8,9 +8,12 @@
 	session.setAttribute("loginUser", loginUser);
 %>
 
-<!DOCTYPE html>
-<html>
-<head>
+<jsp:include page="../common/header.jsp" />
+<jsp:include page="../common/admin-sidebar.jsp">
+    <jsp:param name="menu" value="approval" />
+</jsp:include>
+	
+
   <meta charset="UTF-8">
   <title>결재 승인 및 반려</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -142,8 +145,7 @@
 	  cursor: pointer;
     }
   </style>
-</head>
-<body>
+
 
   <h2>결재 승인 및 반려 처리</h2>
 
@@ -386,6 +388,3 @@
 			loadPendingList();
 		});
 	</script>
-
-</body>
-</html>

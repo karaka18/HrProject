@@ -49,18 +49,8 @@ public class MemberDAOImpl implements MemberDAO {
 
 	@Override
 	public void insertMember(MemberVO vo) {
-		logger.info(" insertMember(MemberVO vo) 호출 ");
-		//1.2. 디비연결 => 생략 (SqlSession 객체 주입)
-		//3. SQL구문 => mapper.xml 작성 
-		//   & pstmt객체 => 생략 (SqlSession 객체 주입)
-		//3-1.  ???? => 생략 (Mybatis설정) 
-		//4. SQL 실행 => 변경 (SqlSession 객체 주입)
-		//sqlSession.insert(statement);
-		// -> sql구문만 가지고 실행
-		//sqlSession.insert(statement, parameter);
-		// -> sql구문 + 전달인자를 사용 실행
-		//               "com.itwillbs.mapper.MemberMapper.insertMember"
-		sqlSession.insert(NAMESPACE + ".insertMember", vo);
+		logger.info("insertMinimalMember(MemberVO memberVO) 호출");
+        sqlSession.insert(NAMESPACE + ".insertMember", vo);
 	}
 
 

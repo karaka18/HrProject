@@ -15,9 +15,6 @@ public interface MemberService {
 	// 회원정보 조회
 	public MemberVO memberInfo(String userid);
 	
-//	// 회원정보 수정
-//	public int memberUpdate(MemberVO updateVO);
-	
 	// 회원정보 삭제
 	public int memberDelete(MemberVO deleteVO);
 	
@@ -30,6 +27,7 @@ public interface MemberService {
 	// 비밀번호만 수정하는 메서드 추가
 	public int updatePassword(String empId, String newPassword);
 
-	
+	// AdminEmployeeController에서 사원번호 추가하면서 비밀번호 초기값 1234 암호화후 db insert
+	public void insertMinimalMember(MemberVO memberVO) throws Exception;
 	
 }

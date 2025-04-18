@@ -3,6 +3,7 @@ package com.itwill.persistence;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.itwill.domain.LoginHistoryVO;
+import com.itwill.domain.UserSessionVO;
 
 
 public interface LoginHistoryDAO {
@@ -14,5 +15,7 @@ public interface LoginHistoryDAO {
     public int countRecentFailedLogins(String empId);
 
 	public boolean isAccountLocked(String empId);
+
+	
     
 }

@@ -20,6 +20,7 @@ import com.itwill.domain.EmailVerificationVO;
 import com.itwill.domain.MemberVO;
 import com.itwill.service.EmailService;
 import com.itwill.service.EmailVerificationService;
+import com.itwill.service.LoginHistoryService;
 import com.itwill.service.MemberService;
 import com.itwill.util.ResponseAPI;
 
@@ -37,6 +38,12 @@ public class AuthController {
 	
 	@Inject
 	private EmailVerificationService emailVService;
+	
+	@Inject
+	private LoginHistoryService userSessionService;
+
+	@Inject
+	private LoginHistoryService loginHistoryService;
 	
 
 	// 인증코드 전송
@@ -220,6 +227,11 @@ public class AuthController {
 		mService.updatePassword(empId, encodedPassword); // ✅ 암호화된 비밀번호 저장
 		
 //		mService.updatePassword(empId, newPassword);
+		
+		
+		// 잠금 해제 및 성공 기록
+//		userSessionService.upsertUserSessionToActive(empId);
+		loginHistoryService.insertFakeSuccessLogin(empId, "127.0.0.1");
 
 		// 세션 정리
 		session.invalidate();

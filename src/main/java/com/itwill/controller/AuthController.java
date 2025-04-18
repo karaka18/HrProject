@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -213,8 +214,12 @@ public class AuthController {
 			response.setResult(resultMap);
 			return response;
 		}
-
-		mService.updatePassword(empId, newPassword);
+		
+		// BCrypt 암호화
+		String encodedPassword = new BCryptPasswordEncoder().encode(newPassword);
+		mService.updatePassword(empId, encodedPassword); // ✅ 암호화된 비밀번호 저장
+		
+//		mService.updatePassword(empId, newPassword);
 
 		// 세션 정리
 		session.invalidate();

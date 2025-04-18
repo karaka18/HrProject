@@ -1,6 +1,6 @@
 package com.itwill.util;
 
-import com.itwill.attendance.record.Attendance;
+import com.itwill.attendance.model.Attendance;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 

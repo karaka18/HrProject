@@ -1,5 +1,6 @@
 package com.itwill.attendance.dto;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import lombok.Builder;
@@ -12,9 +13,13 @@ public class AttendanceDetailDTO {
     // 기본 근태 정보
     private String attendanceId;
     private String empId;
-    private String empName;
     private String departmentId;
     private String departmentName;
+    private Timestamp checkInTime;
+    private Timestamp checkOutTime;
+    private String attendanceStatus;
+    private String empName;      
+    private String depName; 
 
     // 근무 일자 및 시간
     private String workDate;

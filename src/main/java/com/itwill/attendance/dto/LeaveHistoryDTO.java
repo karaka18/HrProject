@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 @Builder
 public class LeaveHistoryDTO {
+	private String leaveId; 		 // 휴가 ID
     private String empId;            // 사원 ID
     private String empName;          // 사원 이름
     private String leaveType;        // 휴가 유형 (연차, 병가 등)

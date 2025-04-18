@@ -167,26 +167,25 @@
         AND lateness_date BETWEEN #{startDate} AND #{endDate}
     </select>
     
-<!--     특정 기간 내의 휴가 내역 -->
-<!--     <select id="getMyLeaveHistoryByDate" resultType="com.itwill.attendance.dto.LeaveHistoryDTO"> -->
+<!-- 특정 기간 내 나의 휴가 내역 조회 --> 
+<!-- <select id="getMyLeaveHistoryByDate" parameterType="map" resultType="com.itwill.attendance.dto.LeaveHistoryDTO"> -->
 <!--     SELECT  -->
-<!--         l.leave_id,                  휴가 ID -->
-<!--         l.emp_id,                    사원 ID -->
-<!--         e.emp_name,                  사원 이름 -->
-<!--         l.leave_type AS leaveType,   휴가 유형 (연차, 병가 등) -->
-<!--         l.leave_reason AS leaveReason, 휴가 사유 -->
-<!--         l.start_date AS startDate,   휴가 시작일 -->
-<!--         l.end_date AS endDate,       휴가 종료일 -->
-<!--         l.approval_status            승인 상태 -->
-<!--     FROM  -->
-<!--         leave l -->
-<!--     JOIN employees e ON l.emp_id = e.emp_id  사원 이름을 employees 테이블에서 가져옴 -->
-<!--     WHERE  -->
-<!--         l.emp_id = #{empId} -->
-<!--         AND l.start_date >= #{startDate} -->
-<!--         AND l.end_date <= #{endDate} -->
-<!--     ORDER BY l.start_date -->
+<!--         leave_id, -->
+<!--         emp_id, -->
+<!--         leave_status, -->
+<!--         leave_start_date, -->
+<!--         leave_end_date, -->
+<!--         leave_days, -->
+<!--         leave_unn, -->
+<!--         created_at, -->
+<!--         updated_at -->
+<!--     FROM `leave` -->
+<!--     WHERE emp_id = #{empId} -->
+<!--       AND leave_start_date >= #{startDate} -->
+<!--       AND leave_end_date <= #{endDate} -->
+<!--     ORDER BY leave_start_date DESC -->
 <!-- </select> -->
+
     
     <!-- 출퇴근 기록 삽입 (통합된 쿼리) -->
     <insert id="insertAttendance" parameterType="com.itwill.attendance.model.Attendance">

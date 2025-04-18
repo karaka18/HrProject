@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ page import="com.itwill.approval.dto.ApprovalSearchDTO"%>
+<%@ page import="com.itwill.salary.dto.SalaryEmployeeDTO" %>
 
 <!-- 템플릿 include -->
 <jsp:include page="../common/header.jsp" />
@@ -7,24 +8,23 @@
     <jsp:param name="menu" value="approval" />
 </jsp:include>
 
-<%
+<%-- <%
 	// 테스트용 로그인 사용자 지정 (이민준 emp_id = 15100002, 박지원 emp_id = 10100001)
 	ApprovalSearchDTO loginUser = new ApprovalSearchDTO();
 	loginUser.setEmpId("15100002"); // 박지원 테스트용
 	//loginUser.setEmpId("10100001"); // 이민준 테스트용
 	session.setAttribute("loginUser", loginUser);
-%>
+%> --%>
 
-<%-- <%
+<%
 	String empId = (String) session.getAttribute("id");
 	if (empId == null) {
-	    response.sendRedirect("/login.jsp");
+		response.sendRedirect(request.getContextPath() + "/member/login");  // 컨트롤러 호출 → 뷰 리졸버 통해 JSP 열림
 	    return;
 	}
 	com.itwill.approval.dto.ApprovalSearchDTO loginUser = new com.itwill.approval.dto.ApprovalSearchDTO();
 	loginUser.setEmpId(empId);
-	session.setAttribute("loginUser", loginUser); // 다시 DTO로 저장해버림
-%> --%>
+%>
 
 <!-- 본문 시작 -->
 <div class="main-container">
@@ -34,7 +34,7 @@
 .main-container {
 	flex: 1;
 	padding: 0;
-	background-color: #fff;
+	background-color: #f9f9f9;
 }
 
 .main-container form {
@@ -256,7 +256,7 @@ html, body {
   </div>
 
 	<script>
-    const loginUserId = '<%=loginUser.getEmpId()%>';
+	const loginUserId = "<%= empId %>";
 		let currentDocId = '';
 		let currentLineId = '';
 		// 페이지네이션 관련 전역 변수 추가

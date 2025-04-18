@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -210,6 +211,12 @@ public class MemberController {
 	@PostMapping(value = "/userinfo")
 	public String memberUserinfoPOST(MemberVO vo) {
 		return "/member/userinfo";
+	}
+	
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+	    session.invalidate(); // 세션 초기화
+	    return "redirect:/member/login"; // 로그인 페이지로 이동
 	}
 
 }

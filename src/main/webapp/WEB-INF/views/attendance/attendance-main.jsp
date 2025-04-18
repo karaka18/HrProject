@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.itwill.attendance.dto.AttendanceStatusDTO" %>
 <!-- 템플릿 include -->
-<!-- http://localhost:8088/attendance/attendance-main -->
+<!-- http://localhost:8008/attendance/attendance-main -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link rel="stylesheet" href="<c:url value='/resources/css/style.css' />">
 <html>

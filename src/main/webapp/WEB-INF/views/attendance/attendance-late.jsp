@@ -2,7 +2,7 @@
 <%@ page import="com.itwill.attendance.dto.LatenessDTO" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!-- 템플릿 include -->
-<!-- http://localhost:8088/attendance/attendance-late -->
+<!-- http://localhost:8008/attendance/attendance-late -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link rel="stylesheet" href="<c:url value='/resources/css/style.css' />">
 <html>

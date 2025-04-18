@@ -1,7 +1,10 @@
 package com.itwill.persistence;
 
+import org.apache.ibatis.annotations.Mapper;
+
 import com.itwill.domain.EmailVerificationVO;
 
+@Mapper
 public interface EmailVerificationDAO {
 	// emp_id로 인증 정보 조회
     public EmailVerificationVO selectByEmpId(String empId);

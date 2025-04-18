@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.itwill.domain.EmailVerificationVO;
 
-@Repository
+//@Repository
 public class EmailVerificationDAOImpl implements EmailVerificationDAO {
 
     private final SqlSession sqlSession;

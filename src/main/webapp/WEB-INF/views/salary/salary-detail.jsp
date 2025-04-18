@@ -6,24 +6,23 @@
     <jsp:param name="menu" value="salary" />
 </jsp:include>
 
-<%
+<%-- <%
 	com.itwill.salary.dto.SalaryEmployeeDTO loginUser = new com.itwill.salary.dto.SalaryEmployeeDTO();
 	//loginUser.setEmpId("22100003"); // 최아영
 	//loginUser.setEmpId("10100001"); // 이민준
 	loginUser.setEmpId("15100002"); // 박지원
 	session.setAttribute("loginUser", loginUser);
-%>
+%> --%>
 
-<%-- <%
+<%
 	String empId = (String) session.getAttribute("id");
 	if (empId == null) {
-	    response.sendRedirect("/login.jsp");
+		response.sendRedirect(request.getContextPath() + "/member/login");  // 컨트롤러 호출 → 뷰 리졸버 통해 JSP 열림
 	    return;
 	}
 	com.itwill.approval.dto.ApprovalSearchDTO loginUser = new com.itwill.approval.dto.ApprovalSearchDTO();
 	loginUser.setEmpId(empId);
-	session.setAttribute("loginUser", loginUser); // 다시 DTO로 저장해버림
-%> --%>
+%>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   
@@ -34,7 +33,7 @@
 .main-container {
 	flex: 1;
 	padding: 0;
-	background-color: #fff;
+	background-color: #f9f9f9;
 }
 
 .wrapper {

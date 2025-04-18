@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans:beans
-	xmlns:beans="http://www.springframework.org/schema/beans"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
@@ -19,10 +19,10 @@
 	<mvc:resources mapping="/resources/**" location="/resources/" />
 
 	<!-- 4. ViewResolver 설정 (JSP 파일 위치 정의) -->
-	<beans:bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<beans:property name="prefix" value="/WEB-INF/views/" />
-		<beans:property name="suffix" value=".jsp" />
-	</beans:bean>
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
 
 	<!-- 5. 컴포넌트 스캔 (Controller 포함) -->
 	<context:component-scan base-package="com.itwill" use-default-filters="false">
@@ -35,16 +35,16 @@
 	</context:component-scan>
 
 	<!-- 6. 파일 업로드 처리용 multipartResolver 설정 -->
-	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<beans:property name="defaultEncoding" value="UTF-8" />
-		<beans:property name="maxUploadSize" value="52428800" />
-	</beans:bean>
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="maxUploadSize" value="52428800" />
+	</bean>
 	
 	<!-- JSON 뷰 리졸버 설정 -->
-    <beans:bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
+    <bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
 
     <!-- Jackson HTTP 메시지 컨버터 -->
-    <beans:bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+    <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
 
-</beans:beans>
+</beans>
 

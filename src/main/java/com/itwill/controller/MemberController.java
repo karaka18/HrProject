@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +18,7 @@ import com.itwill.domain.LoginHistoryVO;
 import com.itwill.domain.MemberVO;
 import com.itwill.service.LoginHistoryService;
 import com.itwill.service.MemberService;
+import com.itwill.util.PasswordEncoderUtil;
 
 @Controller
 @RequestMapping("/member")
@@ -88,13 +90,19 @@ public class MemberController {
 		}
 
 		// 서비스에 로그인체크 동작을 호출해서 확인
-		MemberVO resultVO = mService.memberLoginCheck(vo);
+		// MemberVO resultVO = mService.memberLoginCheck(vo);
+		
+//		// 로그인 실패
+//		if (resultVO == null) {
+//			logger.info(" 로그인 실패! ");
+		
+		MemberVO resultVO = mService.getMemberById(inputId);
 
 		logger.info(" 결과 : {}", resultVO);
-
-		// 로그인 실패
-		if (resultVO == null) {
-			logger.info(" 로그인 실패! ");
+		
+		// 비밀번호 비교 후 로그인 실패 체크
+		if (resultVO == null || !PasswordEncoderUtil.matches(vo.getEmpPw(), resultVO.getEmpPw())) {
+		    logger.info(" 로그인 실패! ");
 
 			// 최근 실패 횟수 확인
 			int failCount = lService.countRecentFailedLogins(inputId);
@@ -143,7 +151,9 @@ public class MemberController {
 		// 로그인 성공 시 세션에 role_id 저장
 		session.setAttribute("role_id", resultVO.getRoleId());
 
-		if ("1234".equals(resultVO.getEmpPw())) {
+//		if ("1234".equals(resultVO.getEmpPw())) {
+		
+		if (PasswordEncoderUtil.matches("1234", resultVO.getEmpPw())) {
 			session.setAttribute("loginUser", resultVO.getEmpId()); // 세션에 사용자 정보 저장
 			return "redirect:/member/userinfo"; // 특정 페이지로 이동
 		} else {
@@ -210,6 +220,12 @@ public class MemberController {
 	@PostMapping(value = "/userinfo")
 	public String memberUserinfoPOST(MemberVO vo) {
 		return "/member/userinfo";
+	}
+	
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+	    session.invalidate(); // 세션 초기화
+	    return "redirect:/member/login"; // 로그인 페이지로 이동
 	}
 
 }

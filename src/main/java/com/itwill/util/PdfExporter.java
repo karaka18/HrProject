@@ -1,6 +1,6 @@
 package com.itwill.util;
 
-import com.itwill.attendance.record.Attendance;
+import com.itwill.attendance.model.Attendance;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 

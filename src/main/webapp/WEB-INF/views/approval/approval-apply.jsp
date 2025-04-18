@@ -7,23 +7,22 @@
 </jsp:include>
 
 <%-- 테스트용 로그인 사용자 지정 (최아영 emp_id = 22100003) --%>
-<%
+<%-- <%
 
 	com.itwill.approval.dto.ApprovalSearchDTO loginUser = new com.itwill.approval.dto.ApprovalSearchDTO();
 	loginUser.setEmpId("22100003");
 	session.setAttribute("loginUser", loginUser);
 %>
-
-<%-- <%
+ --%>
+<%
 	String empId = (String) session.getAttribute("id");
 	if (empId == null) {
-	    response.sendRedirect("/login.jsp");
+		response.sendRedirect(request.getContextPath() + "/member/login");  // 컨트롤러 호출 → 뷰 리졸버 통해 JSP 열림
 	    return;
 	}
 	com.itwill.approval.dto.ApprovalSearchDTO loginUser = new com.itwill.approval.dto.ApprovalSearchDTO();
 	loginUser.setEmpId(empId);
-	session.setAttribute("loginUser", loginUser); // 다시 DTO로 저장해버림
-%> --%>
+%>
 
 <!-- 페이지 제목 설정 (header.jsp에서 동적으로 표시) -->
 <%-- <c:set var="pageTitle" value="전자결재 신청" /> --%>
@@ -32,8 +31,8 @@
 <div class="main-container">
 
 <script>
-    // JSP에서 로그인한 사용자 ID를 JavaScript 변수로 저
-    const loginUserId = "${sessionScope.loginUser.empId}";
+    // JSP에서 로그인한 사용자 ID를 JavaScript 변수로 저장
+    const loginUserId = '<%= loginUser.getEmpId() %>';
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -41,7 +40,7 @@
 .main-container {
   flex: 1;
   padding: 0;
-  background-color: #fff;
+  background-color: #f9f9f9;
 }
 
 .main-container form {
@@ -143,7 +142,7 @@ html, body {
 }
 
 .my-content-wrapper input.half-width {
-  width: 25%;
+  width: 30%;
 }
 
 .my-content-wrapper input[type="radio"] {
@@ -282,8 +281,8 @@ html, body {
       <option value="BUSINESS">출장</option>
     </select>
 
-    <input type="hidden" name="requester" value="${sessionScope.loginUser.empId}" />
-    <input type="hidden" name="register" value="${sessionScope.loginUser.empId}" />
+    <input type="hidden" name="requester" value="${sessionScope.id}" />
+	<input type="hidden" name="register" value="${sessionScope.id}" />
     <input type="hidden" name="attachmentCount" id="attachmentCount" value="0" />
   </div>
 

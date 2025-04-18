@@ -102,7 +102,7 @@ public class ApprovalAdminController {
 	                .append(approver.getName()).append(" (")
 	                .append(approver.getDept()).append(" / ")
 	                .append(approver.getPosition()).append(") ")
-	                .append("(").append(approver.getStatus()).append(")");
+	                .append("(").append(approver.getStatus() != null ? approver.getStatus() : "대기").append(")");
 
 	            if (i < detail.getApprovers().size() - 1) html.append(" → ");
 	        }
@@ -145,10 +145,12 @@ public class ApprovalAdminController {
 	public void approve(@RequestBody ApprovalAppDTO dto, HttpSession session) {
 	    dto.setApprovalStatus("승인");
 
-	    ApprovalSearchDTO loginUser = (ApprovalSearchDTO) session.getAttribute("loginUser");
-	    if (loginUser != null) {
-	        dto.setRegister(loginUser.getEmpId());
-	        dto.setModifier(loginUser.getEmpId());
+	    String empId = (String) session.getAttribute("id");
+	    if (empId != null) {
+	        dto.setRegister(empId);
+	        dto.setModifier(empId);
+	    } else {
+	        throw new RuntimeException("로그인 정보 없음"); // 또는 401 Unauthorized 처리
 	    }
 
 	    approvalService.saveApprovalResult(dto); // INSERT into APPROVAL_APP
@@ -160,10 +162,12 @@ public class ApprovalAdminController {
 	public void reject(@RequestBody ApprovalAppDTO dto, HttpSession session) {
 	    dto.setApprovalStatus("반려");
 
-	    ApprovalSearchDTO loginUser = (ApprovalSearchDTO) session.getAttribute("loginUser");
-	    if (loginUser != null) {
-	        dto.setRegister(loginUser.getEmpId());
-	        dto.setModifier(loginUser.getEmpId());
+	    String empId = (String) session.getAttribute("id");
+	    if (empId != null) {
+	        dto.setRegister(empId);
+	        dto.setModifier(empId);
+	    } else {
+	        throw new RuntimeException("로그인 정보 없음"); // 또는 401 Unauthorized 처리
 	    }
 
 	    approvalService.saveApprovalResult(dto); // INSERT into APPROVAL_APP

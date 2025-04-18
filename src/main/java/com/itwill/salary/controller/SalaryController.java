@@ -34,12 +34,11 @@ public class SalaryController {
             @RequestParam("salMonth") String salMonth,
             HttpSession session) {
 
-        SalaryEmployeeDTO loginUser = (SalaryEmployeeDTO) session.getAttribute("loginUser");
-        if (loginUser == null) {
+    	String empId = (String) session.getAttribute("id");
+        if (empId == null) {
             throw new RuntimeException("로그인 정보 없음");
         }
-
-        return salaryService.getSalaryDetail(loginUser.getEmpId(), salMonth);
+        return salaryService.getSalaryDetail(empId, salMonth);
     }
 
     // 엑셀 다운로드
@@ -48,10 +47,11 @@ public class SalaryController {
                                      HttpServletResponse response,
                                      HttpSession session) throws IOException {
 
-        SalaryEmployeeDTO loginUser = (SalaryEmployeeDTO) session.getAttribute("loginUser");
-        if (loginUser == null) throw new RuntimeException("로그인 필요");
+    	String empId = (String) session.getAttribute("id");
+        if (empId == null) {
+            throw new RuntimeException("로그인 필요");
+        }
 
-        String empId = loginUser.getEmpId();
         SalaryDetailDTO dto = salaryService.getSalaryDetail(empId, salMonth);
 
         // 파일명 한글 인코딩
@@ -68,10 +68,11 @@ public class SalaryController {
                                   HttpServletResponse response,
                                   HttpSession session) throws IOException {
 
-        SalaryEmployeeDTO loginUser = (SalaryEmployeeDTO) session.getAttribute("loginUser");
-        if (loginUser == null) throw new RuntimeException("로그인 필요");
-
-        String empId = loginUser.getEmpId();
+    	String empId = (String) session.getAttribute("id");
+        if (empId == null) {
+            throw new RuntimeException("로그인 필요");
+        }
+            
         SalaryDetailDTO dto = salaryService.getSalaryDetail(empId, salMonth);
 
         String filename = URLEncoder.encode("급여명세서_" + salMonth + ".pdf", StandardCharsets.UTF_8)

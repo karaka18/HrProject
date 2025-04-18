@@ -7,22 +7,21 @@
 </jsp:include>
 
 <%-- 테스트용 로그인 사용자 지정 (최아영 emp_id = 22100003) --%>
-<%
+<%-- <%
 	com.itwill.approval.dto.ApprovalSearchDTO loginUser = new com.itwill.approval.dto.ApprovalSearchDTO();
 	loginUser.setEmpId("22100003");
 	session.setAttribute("loginUser", loginUser);
-%>
+%> --%>
 
-<%-- <%
+<%
 	String empId = (String) session.getAttribute("id");
 	if (empId == null) {
-	    response.sendRedirect("/login.jsp");
+		response.sendRedirect(request.getContextPath() + "/member/login");  // 컨트롤러 호출 → 뷰 리졸버 통해 JSP 열림
 	    return;
 	}
 	com.itwill.approval.dto.ApprovalSearchDTO loginUser = new com.itwill.approval.dto.ApprovalSearchDTO();
 	loginUser.setEmpId(empId);
-	session.setAttribute("loginUser", loginUser); // 다시 DTO로 저장해버림
-%> --%>
+%>
 
 <!-- 본문 시작 -->
 <div class="main-container">
@@ -33,7 +32,7 @@
 .main-container {
 	flex: 1;
 	padding: 0;
-	background-color: #fff;
+	background-color: #f9f9f9;
 }
 
 .main-container form {
@@ -229,7 +228,7 @@ html, body {
   </div>
 
   <script>
-    const loginUserId = '<%= loginUser.getEmpId() %>';
+  const loginUserId = "<%= empId %>";
     let approvalList = [];
     let itemsPerPage = 10;
 

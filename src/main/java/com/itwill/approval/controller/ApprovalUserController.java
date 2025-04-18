@@ -29,10 +29,10 @@ public class ApprovalUserController {
     @GetMapping("/user-documents")
     @ResponseBody
     public List<PendingApprovalDTO> getMyDocuments(HttpSession session) {
-        ApprovalSearchDTO loginUser = (ApprovalSearchDTO) session.getAttribute("loginUser");
-        if (loginUser == null) return Collections.emptyList();
+        String empId = (String) session.getAttribute("id");  // 여기로 수정
+        if (empId == null) return Collections.emptyList();
 
-        return approvalService.getMyRequestedDocuments(loginUser.getEmpId());
+        return approvalService.getMyRequestedDocuments(empId);
     }
     
     @GetMapping("/user-detail")

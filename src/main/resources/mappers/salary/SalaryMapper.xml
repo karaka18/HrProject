@@ -86,19 +86,19 @@
 	</select>
 
 	<insert id="insertEmpSalary"
-		parameterType="com.itwill.salary.dto.SalaryDetailDTO">
-		INSERT INTO EMP_SALARY (
-		sal_id, emp_id, sal_month,
-		sal_total, sal_ded_total,
-		sal_net_pay,
-		sal_pay_date, sal_register
-		)
-		VALUES (
-		#{dto.salId}, #{dto.empId}, #{dto.salMonth},
-		#{dto.totalPay},
-		#{dto.totalDeductions}, #{dto.netPay},
-		NOW(), #{dto.register}
-		)
+	        parameterType="com.itwill.salary.dto.SalaryDetailDTO">
+	    INSERT INTO EMP_SALARY (
+	        sal_id, emp_id, sal_month,
+	        sal_total, sal_ded_total,
+	        sal_net_pay,
+	        sal_pay_date, sal_register
+	    )
+	    VALUES (
+	        #{salId}, #{empId}, #{salMonth},
+	        #{totalPay},
+	        #{totalDeductions}, #{netPay},
+	        NOW(), #{register}
+	    )
 	</insert>
 
 	<insert id="insertEmpSalaryDetail">

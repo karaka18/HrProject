@@ -314,6 +314,14 @@
 		<artifactId>commons-io</artifactId>
 		<version>2.11.0</version>
 	</dependency>
+		
+	<!-- Spring Security Core for PasswordEncoder 비밀번호 암호화 -->
+	<dependency>
+	    <groupId>org.springframework.security</groupId>
+	    <artifactId>spring-security-core</artifactId>
+	    <version>4.2.13.RELEASE</version> <!-- Spring 4.3.8과 호환 잘됨 -->
+	</dependency>
+	
 	
 	</dependencies>
 

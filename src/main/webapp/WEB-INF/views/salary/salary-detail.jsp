@@ -259,6 +259,10 @@ $(document).ready(function () {
       $monthSelect.append('<option value="' + mm + '">' + m + '월</option>');
     }
   }
+  
+  function getLastDayOfMonth(year, month) {
+	  return new Date(year, month, 0).getDate();
+  }
 
   // 초기 월 제한
   populateMonthOptions(currentMonth - 1);
@@ -283,13 +287,14 @@ $(document).ready(function () {
       url: '/salary/view',
       data: { salMonth: salMonth },
       success: function (res) {
+    	  const lastDay = getLastDayOfMonth(year, month);
     	$('#excelBtn').prop('disabled', false);
     	$('#pdfBtn').prop('disabled', false);  
     	  
         $('#empName').text(res.empName);
         $('#deptName').text(res.deptName);
         $('#payDate').text(res.payDate);
-        $('#workRange').text(year + "-" + month + "-01 ~ " + year + "-" + month + "-31");
+        $('#workRange').text(year + "-" + month + "-01 ~ " + year + "-" + month + "-" + lastDay);
 
         $('#totalPay').text(res.totalPay.toLocaleString());
         $('#totalDeduct').text(res.totalDeductions.toLocaleString());

@@ -128,8 +128,18 @@ public class SalaryServiceImpl implements SalaryService {
         Integer posAllow = salaryDAO.selectPositionAllowance(sqlSession, empId);
         if (posAllow == null) posAllow = 0;
         SalaryEmployeeDTO empInfo = salaryDAO.findEmployeeInfo(sqlSession, empId);
+        
+        String posId = empInfo.getPosId();
+        int basePay;
+        switch (posId) {
+            case "사원": basePay = 2800000; break;
+            case "대리": basePay = 30000000; break;
+            case "과장": basePay = 3500000; break;
+            case "팀장": basePay = 40000000; break;
+            case "부장": basePay = 4500000; break;
+            default: basePay = 2500000; break; // 기본값
+        }
 
-        int basePay = 2_500_000;
         int nightPay = att.getNightHours() * 15_000;
         int holidayPay = att.getHolidayHours() * 20_000;
         int positionPay = posAllow;

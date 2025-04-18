@@ -45,6 +45,9 @@
 
     <!-- Jackson HTTP 메시지 컨버터 -->
     <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+    
+    <!-- 이미지 파일 매핑 -->
+    <mvc:resources mapping="/image/**" location="/image/" />
 
 </beans>
 

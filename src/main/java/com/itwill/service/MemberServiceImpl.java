@@ -22,11 +22,6 @@ public class MemberServiceImpl implements MemberService {
 	@Inject
 	private MemberDAO mdao;
 	
-//	@Override
-//	public void memberJoin(MemberVO vo) {
-//		logger.info(" 회원가입 실행 -> DAO 메서드 호출 ");
-//		mdao.insertMember(vo);
-//	}
 
 	@Override
 	public MemberVO memberLoginCheck(MemberVO loginVO) {
@@ -79,6 +74,15 @@ public class MemberServiceImpl implements MemberService {
 	public int updatePassword(String empId, String newPassword) {
 	    return mdao.updatePassword(empId, newPassword); // ✅ 정확하게 분리된 메서드로!
 	}
+	
+	@Override
+    public void insertMinimalMember(MemberVO memberVO) throws Exception {
+        // 암호화된 비밀번호는 이미 컨트롤러에서 처리되었으므로
+        // 여기서는 그대로 insert 작업만 수행
+		mdao.insertMember(memberVO);
+    }
+	
+	
 
 	
 	

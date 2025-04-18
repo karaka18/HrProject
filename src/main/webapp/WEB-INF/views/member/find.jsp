@@ -40,7 +40,7 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
     .option img {
-        width: 100%;
+        width: 70px;
         height: auto;
         border-radius: 5px;
     }
@@ -52,7 +52,7 @@
     <h1>아이디/비밀번호 찾기</h1>
     <div class="option-container">
         <div class="option" onclick="location.href='/member/find/email'">
-            <img src="email-icon.png" alt="이메일 인증">
+            <img src="<%=request.getContextPath()%>/image/email-icon.jpg" alt="이메일 인증">
             <p>등록한 e-mail 주소 인증 후 재발급</p>
         </div>
         <!-- <div class="option" onclick="location.href='/member/find/phone'">

@@ -279,6 +279,10 @@ function convertItemNameToCode(name) {
   return map[name] || null;
 }
 
+function getLastDayOfMonth(year, month) {
+	return new Date(year, month, 0).getDate();
+}
+
 $(document).ready(function () {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
@@ -319,10 +323,11 @@ $(document).ready(function () {
       url: '/salary/admin/calculate',
       data: { empId: selectedEmpId, salMonth: salMonth },
       success: function (res) {
+    	  const lastDay = getLastDayOfMonth(year, month);
         $('#empName').text(res.empName);
         $('#deptName').text(res.deptName);
         $('#payDate').text(res.payDate);
-        $('#workRange').text(year + "-" + month + "-01 ~ " + year + "-" + month + "-31");
+        $('#workRange').text(year + "-" + month + "-01 ~ " + year + "-" + month + "-" + lastDay);
         $('#totalPay').text(res.totalPay.toLocaleString());
         $('#totalDeduct').text(res.totalDeductions.toLocaleString());
         $('#netPay').text(res.netPay.toLocaleString());

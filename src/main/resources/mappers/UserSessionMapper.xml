@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  
+<mapper namespace="com.itwill.mapper.UserSessionMapper">
+
+    <select id="findByEmpId" parameterType="String" resultType="com.itwill.domain.UserSessionVO">
+        SELECT * FROM USER_SESSION WHERE emp_id = #{empId}
+    </select>
+
+    <insert id="insert" parameterType="com.itwill.domain.UserSessionVO">
+        INSERT INTO USER_SESSION (
+            emp_id, account_status, created_at, updated_at
+        ) VALUES (
+            #{empId}, #{accountStatus}, #{createdAt}, #{updatedAt}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.itwill.domain.UserSessionVO">
+        UPDATE USER_SESSION
+        SET account_status = #{accountStatus},
+            updated_at = #{updatedAt}
+        WHERE emp_id = #{empId}
+    </update>
+    
+    <insert id="insertIfNotExists" parameterType="UserSessionVO">
+    INSERT INTO USER_SESSION (
+        emp_id, account_status, login_attempts, created_at, updated_at
+    )
+    VALUES (
+        #{empId}, #{accountStatus}, #{loginAttempts}, NOW(), NOW()
+    )
+    ON DUPLICATE KEY UPDATE
+        updated_at = NOW()
+</insert>
+    
+    
+
+</mapper>

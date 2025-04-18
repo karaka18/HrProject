@@ -31,6 +31,7 @@ public class MemberController {
 
 	@Inject
 	private LoginHistoryService lService;
+	
 
 	// 로그인
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -105,7 +106,7 @@ public class MemberController {
 		    logger.info(" 로그인 실패! ");
 
 			// 최근 실패 횟수 확인
-			int failCount = lService.countRecentFailedLogins(inputId);
+			int failCount = lService.countRecentFailedLogins(inputId) + 1;
 			logger.info("최근 실패 횟수: {}", failCount);
 
 			// 5회 이상 실패시 처리
@@ -131,6 +132,8 @@ public class MemberController {
 				historyfail.setLoginResult("FAIL");
 				lService.insertLoginHistory(historyfail);
 				
+				lService.initSessionIfNotExists(inputId, failCount);
+				
 				rttr.addFlashAttribute("message", "로그인 실패! (" + failCount + "회 실패)[5회 실패시 잠금]");
 			}
 
@@ -144,6 +147,8 @@ public class MemberController {
 		historysuc.setLoginStatus("ACTIVE");
 		historysuc.setLoginResult("SUCCESS");
 		lService.insertLoginHistory(historysuc);
+		
+		lService.upsertUserSessionToActive(inputId);
 
 		// 세션 영역에 로그인 성공한 사용자의 아이디를 저장
 		session.setAttribute("id", resultVO.getEmpId());

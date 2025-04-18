@@ -114,8 +114,8 @@
 		resultType="com.itwill.salary.dto.SalaryEmployeeDTO">
 		SELECT e.emp_id AS empId,
 		e.emp_name AS empName,
-		d.dep_name
-		AS deptName
+		d.dep_name AS deptName,
+		e.pos_id AS posId
 		FROM EMPLOYEE e
 		JOIN DEPARTMENT d ON e.dep_id = d.dep_id
 		WHERE e.emp_id = #{empId}

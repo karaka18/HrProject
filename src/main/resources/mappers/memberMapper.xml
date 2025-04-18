@@ -9,12 +9,12 @@
 		select now()
 	</select>
 
-	<!-- 회원가입 -->
-	<!-- <insert id="insertMember"> 
-		insert into EMPLOYEE (emp_id, emp_name, emp_pw, emp_phone, emp_email, emp_address, dep_name, pos_id, rank_id)
-		values(#{empId}, #{empName}, #{empPw}, #{empPhone}, #{empEmail}, #{empAddress}, #{depName}, #{posId}, #{rankId}) 
-	</insert> -->
-	<!-- 회원가입 -->
+	<!-- 사원추가 -->
+	<insert id="insertMember">
+		insert into EMPLOYEE (emp_id, emp_pw)
+		values(#{empId}, #{empPw})
+	</insert>
+	<!-- 사원추가 -->
 
 	<!-- 로그인 체크 -->
 	<select id="loginCheck" resultType="com.itwill.domain.MemberVO">

@@ -119,7 +119,7 @@ public class AdminController {
     
     @PostMapping("/notice/write")
     public String write(@ModelAttribute NoticeVO vo) {
-        vo.setNot_register("admin");  // ��: ���ǿ��� ���� ����
+    	vo.setNotRegister("admin");  // ��: ���ǿ��� ���� ����
         noticeService.insertNotice(vo);
         return "redirect:/admin/notice/manage";
     }
@@ -134,7 +134,7 @@ public class AdminController {
 
     @PostMapping("/notice/edit")
     public String edit(@ModelAttribute NoticeVO vo) {
-        vo.setNot_modifier("admin"); 
+    	vo.setNotModifier("admin"); 
         noticeService.updateNotice(vo);
         return "redirect:/admin/notice/manage";
     }

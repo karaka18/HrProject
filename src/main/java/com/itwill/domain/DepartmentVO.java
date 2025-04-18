@@ -11,11 +11,11 @@ import lombok.ToString;
 @ToString
 public class DepartmentVO {
 
-    private int dep_id;                // 부서번호 (PK)
-    private String dep_name;          // 부서명
-    private String dep_register;      // 등록자
-    private Timestamp dep_registdate; // 등록일자
-    private String dep_modifier;      // 수정자
-    private Timestamp dep_modifydate; // 수정일자
+    private int depId;                 // 부서번호 (PK)
+    private String depName;           // 부서명
+    private String depRegister;       // 등록자
+    private Timestamp depRegistdate;  // 등록일자
+    private String depModifier;       // 수정자
+    private Timestamp depModifydate;  // 수정일자
 
 }

@@ -22,6 +22,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeVO getEmployeeById(String emp_id) {
+    	
+    	System.out.println("@@@@@@@@@@@@@@@@@@@");
+    	System.out.println(emp_id);
+    	System.out.println(employeeDAO.getEmployeeById(emp_id));
+    	
+    	System.out.println("@@@@@@@@@@@@@@@@@@@");
+    	
         return employeeDAO.getEmployeeById(emp_id);
     }
 

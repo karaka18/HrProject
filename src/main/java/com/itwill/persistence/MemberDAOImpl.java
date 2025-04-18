@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.itwill.domain.MemberVO;
 
-//@Repository
+@Repository
 public class MemberDAOImpl implements MemberDAO {
 
 	private static final Logger logger 

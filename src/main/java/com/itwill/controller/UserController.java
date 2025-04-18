@@ -50,14 +50,15 @@ public class UserController {
 	    //EmployeeVO employee = employeeService.getEmployeeById(empId);
 	    EmployeeVO employee = employeeService.getEmployeeById(testEmpId);
 	    
+	    System.out.println("조회된 사원: " + employee);
 	    System.out.println("employee: " + employee);
-	    System.out.println("입사일: " + employee.getEmp_jd());
+	    System.out.println("입사일: " + employee.getEmpJd());
 	  
 	    
 	    
 	    // 입사일로부터 근무일 계산 (emp_jd 필드 활용)
-	    if (employee.getEmp_jd() != null) {
-	        LocalDate joinDate = employee.getEmp_jd().toLocalDate();
+	    if (employee.getEmpJd() != null) {
+	        LocalDate joinDate = employee.getEmpJd().toLocalDate();
 	        LocalDate today = LocalDate.now();
 	        long workDays = ChronoUnit.DAYS.between(joinDate, today);
 	        model.addAttribute("workDays", workDays);

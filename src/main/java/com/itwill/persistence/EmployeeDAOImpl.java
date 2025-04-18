@@ -27,6 +27,8 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 
     @Override
     public EmployeeVO getEmployeeById(String empId) {
+    	
+    	System.out.println("@@@@@55555555555555555@@@@@@@@@@@@@@@");
     	System.out.println(empId);
     	
     	EmployeeVO emp =sqlSession.selectOne(NAMESPACE + ".getEmployeeById", empId);

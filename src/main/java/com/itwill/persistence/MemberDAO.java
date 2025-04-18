@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.itwill.domain.MemberVO;
 
-@Mapper
+
 public interface MemberDAO {
 	
 	// 디비서버 시간정보 조회기능

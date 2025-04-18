@@ -12,37 +12,35 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class EmployeeVO {
-	private String emp_id;
-	private String emp_name;
-	private String emp_pw;
-	private String emp_gender;
-	private String emp_jm;
-	private String emp_phone;
-	private String emp_email;
-	private String emp_address;
+	private String empId;
+	private String empName;
+	private String empPw;
+	private String empGender;
+	private String empJm;
+	private String empPhone;
+	private String empEmail;
+	private String empAddress;
 
-	@DateTimeFormat(pattern = "yyyy-MM-dd")	
-	private Date emp_jd;
-	
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date emp_qd;
-	private String dep_id;
-	private String dep_name;
-	private String pos_id;
-	private String rank_id;
-	
-	
-	private String emp_registdate;
-	private String emp_register;
-	
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Timestamp emp_modifydate;
-	private String emp_modifier;
-	private String emp_pht;
-	private String emp_cn;
-	private String app_id;
-	
+	private Date empJd;
 
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Date empQd;
+
+	private String depId;
+	private String depName;
+	private String posId;
+	private String rankId;
+
+	private String empRegistdate;
+	private String empRegister;
+
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Timestamp empModifydate;
+
+	private String empModifier;
+	private String empPht;
+	private String empCn;
+	private String appId;
 }

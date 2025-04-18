@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.itwill.domain.LoginHistoryVO;
 
-//@Repository
+@Repository
 public class LoginHistoryDAOImpl implements LoginHistoryDAO {
 
     @Inject

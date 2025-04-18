@@ -72,6 +72,13 @@ public interface AttendanceMapper {
     void insertClockIn(@Param("empId") String empId);
     void updateClockOut(@Param("empId") String empId);
     
+    List<AttendanceDetailDTO> selectAttendanceByEmpId(@Param("empId") String empId);
 
+    //사용자 근무 상태 조회 - 조인 기반 (AttendanceStatusId)
+    List<AttendanceStatusDTO> selectAttendanceStatusList();
+    
+    // 지각 날짜 및 횟수 업데이트
+    void updateLateness(@Param("empId") String empId, @Param("latenessDates") String latenessDates, @Param("latenessCount") int latenessCount);
+}
 
 }

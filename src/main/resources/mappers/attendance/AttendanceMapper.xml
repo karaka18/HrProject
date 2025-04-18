@@ -218,5 +218,103 @@
         WHERE emp_id = #{empId}
           AND attend_date = CURDATE()
     </update>
+    
+    <select id="selectAttendanceByEmpId" resultType="com.itwill.attendance.dto.AttendanceDetailDTO">
+	    SELECT
+	        a.attendance_date,
+	        a.attendance_status,
+	        a.clock_in_time,
+	        a.clock_out_time,
+	        d.dep_name,
+	        e.emp_name
+	    FROM ATTENDANCE a
+	    JOIN EMPLOYEE e ON a.emp_id = e.emp_id
+	    JOIN DEPARTMENT d ON e.dep_id = d.dep_id
+	    WHERE a.emp_id = #{empId}
+	    ORDER BY a.attendance_date DESC
+	</select>
+    
+    <!-- 출퇴근 기록부 -->
+	<select id="selectTodayAttendance" resultType="com.itwill.attendance.dto.AttendanceDTO">
+	    SELECT *
+	    FROM ATTENDANCE
+	    WHERE emp_id = #{empId}
+	      AND attendance_date = CURRENT_DATE
+	</select>
+	
+	 <!-- [4. 사용자 근무 상태 조회 - 조인 기반, AttendanceStatusId] -->
+    <select id="selectAttendanceStatusList" resultType="com.itwill.attendance.dto.AttendanceStatusDTO">
+        SELECT
+            e.emp_id AS empId,
+            e.emp_name AS empName,
+            d.dep_name AS departmentName,
+            a.att_date AS date,
+            a.work_type AS workType,
+            a.check_in_time AS checkInTime,
+            a.check_out_time AS checkOutTime,
+            a.remarks AS remarks,
+
+            -- 가공된 파생 컬럼
+            CONCAT(a.att_date, e.emp_id, a.work_type) AS attendanceStatusId,
+
+            a.approval_status AS approvalStatus
+
+        FROM ATTENDANCE a
+        JOIN EMPLOYEE e ON a.emp_id = e.emp_id
+        JOIN DEPARTMENT d ON e.dep_id = d.dep_id
+        ORDER BY a.att_date DESC, e.emp_id
+    </select>
+	
+     <!-- 근무 일자 계산 (출근한 날 개수) -->
+    <select id="countWorkDays" resultType="int">
+        SELECT COUNT(DISTINCT attendance_date)
+        FROM attendance
+        WHERE emp_id = #{empId} AND check_in_time IS NOT NULL
+    </select>
+
+    <!-- 근무 시간 계산 (출근한 날의 근무 시간 합) -->
+    <select id="calculateWorkHours" resultType="double">
+        SELECT SUM(TIMESTAMPDIFF(HOUR, check_in_time, check_out_time))
+        FROM attendance
+        WHERE emp_id = #{empId} AND check_in_time IS NOT NULL AND check_out_time IS NOT NULL
+    </select>
+    
+    <!-- 지각 횟수 조회 쿼리 -->
+	<select id="getLatenessCount" resultType="int">
+	    SELECT lateness_count
+	    FROM attendance
+	    WHERE emp_id = #{empId}
+	</select>
+	
+	<!-- 지각 날짜 조회 쿼리 -->
+	<select id="getLatenessDates" resultType="String">
+	    SELECT lateness_dates
+	    FROM attendance
+	    WHERE emp_id = #{empId}
+	</select>
+	
+	<!-- 지각 정보 업데이트 쿼리 -->
+	<update id="updateLateness">
+	    UPDATE attendance
+	    SET lateness_count = #{latenessCount},
+	        lateness_dates = #{latenessDates}
+	    WHERE emp_id = #{empId}
+	</update>
+	
+	<!-- 출근 시간 설정 쿼리 -->
+	<update id="updateConfiguredStartTime">
+	    UPDATE attendance
+	    SET configured_start_time = #{configuredStartTime}
+	    WHERE emp_id = #{empId}
+	</update>
+    
+    <!-- 지각 정보 있으면 업데이트 -->
+	<update id="updateLateness" parameterType="map">
+	    UPDATE ATTENDANCE
+	    SET lateness_count = #{latenessCount}, lateness_dates = #{latenessDates}
+	    WHERE emp_id = #{empId}
+	</update>
+    
+    
 
 </mapper>

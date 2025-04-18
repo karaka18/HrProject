@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans
-	xmlns="http://www.springframework.org/schema/beans"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
-		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/mvc
+           http://www.springframework.org/schema/mvc/spring-mvc.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+    <!-- Spring bean 정의들 -->
+    <!-- Spring bean 정의들 -->
 
 	<!-- 1. 어노테이션 기반 컨트롤러 활성화 -->
 	<mvc:annotation-driven />
@@ -28,10 +31,6 @@
 	<context:component-scan base-package="com.itwill" use-default-filters="false">
 	    <!-- Controller만 포함 -->
 	    <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-	    <!-- 다른 컴포넌트는 제외 -->
-	    <!-- <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
-	    <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
-	    <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Component"/> -->
 	</context:component-scan>
 
 	<!-- 6. 파일 업로드 처리용 multipartResolver 설정 -->
@@ -47,4 +46,3 @@
     <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
 
 </beans>
-

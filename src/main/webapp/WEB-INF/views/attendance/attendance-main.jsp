@@ -1,11 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.itwill.attendance.dto.AttendanceStatusDTO" %>
-<!-- 템플릿 include -->
-<!-- http://localhost:8008/attendance/attendance-main -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link rel="stylesheet" href="<c:url value='/resources/css/style.css' />">
 <html>
 <head>
+
+<%-- <p>근무 시간: ${attendance.workHours}시간</p> --%>
+<%-- <p>근무 일수: ${attendance.workDays}일</p> --> 추가로 붙여넣기  --%>
+
+
     <title>근태 관리 메인 페이지</title>
     <link rel="stylesheet" href="<c:url value='/resources/css/style.css' />">
     <script>
@@ -19,21 +22,9 @@
         setInterval(updateClock, 1000);
         window.onload = updateClock;
 
-        // 출근/퇴근 시간 기록
-        function setAttendanceTime(type) {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('ko-KR', { hour12: false });
-
-            if (type === 'start') {
-                document.getElementById("startTime").textContent = timeStr;
-            } else {
-                document.getElementById("endTime").textContent = timeStr;
-            }
-        }
-
         // 출근/퇴근 요청 함수
         function sendAttendance(type) {
-            const empId = document.getElementById("empId").value; // 세션에서 empId 가져오기
+            const empId = document.getElementById("empId").value;
             const url = (type === 'start') ? '/attendance/clock-in' : '/attendance/clock-out';
 
             fetch(url, {
@@ -46,7 +37,7 @@
             .then(response => {
                 if (response.ok) {
                     alert(type === 'start' ? '출근 등록 완료!' : '퇴근 등록 완료!');
-                    location.reload();
+                    location.reload(); // 시간 새로고침
                 } else {
                     alert('처리에 실패했습니다.');
                 }
@@ -87,8 +78,30 @@
         </div>
 
         <div class="attendance-times">
-            <p>오늘의 출근 시간: <span id="startTime">--:--:--</span></p>
-            <p>오늘의 퇴근 시간: <span id="endTime">--:--:--</span></p>
+            <p>오늘의 출근 시간: 
+                <span id="startTime">
+                    <c:choose>
+                        <c:when test="${not empty status.todayStartTime}">
+                            <c:out value="${status.todayStartTime}" />
+                        </c:when>
+                        <c:otherwise>
+                            --:--:--
+                        </c:otherwise>
+                    </c:choose>
+                </span>
+            </p>
+            <p>오늘의 퇴근 시간: 
+                <span id="endTime">
+                    <c:choose>
+                        <c:when test="${not empty status.todayEndTime}">
+                            <c:out value="${status.todayEndTime}" />
+                        </c:when>
+                        <c:otherwise>
+                            --:--:--
+                        </c:otherwise>
+                    </c:choose>
+                </span>
+            </p>
         </div>
     </div>
 </div>

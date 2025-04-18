@@ -67,5 +67,126 @@ public interface AttendanceService {
     // [15] 사용자 퇴근 처리
     void clockOut(String empId); 
     
+    List<AttendanceDetailDTO> getAttendanceByEmpId(String empId);
     
+    AttendanceDTO getTodayAttendance(String empId);
+    
+ // 근태 계산 메서드
+    public void calculateAttendance(AttendanceDTO attendanceDTO) {
+        // 근무 시간 계산
+        calculateWorkTime(attendanceDTO);
+
+        // 근무 일수 계산
+        calculateWorkDays(attendanceDTO);
+    }
+
+    // 근무 시간 계산 (출근 시간과 퇴근 시간 기반으로)
+    private void calculateWorkTime(AttendanceDTO attendanceDTO) {
+        if (attendanceDTO.getWorkStartTime() != null && attendanceDTO.getWorkEndTime() != null) {
+            Duration duration = Duration.between(attendanceDTO.getWorkStartTime(), attendanceDTO.getWorkEndTime());
+            attendanceDTO.setWorkHours((int) duration.toHours()); // 근무 시간 설정
+        }
+    }
+
+    // 근무 일수 계산 (출근일과 퇴근일의 차이 계산)
+    private void calculateWorkDays(AttendanceDTO attendanceDTO) {
+        if (attendanceDTO.getWorkStartTime() != null && attendanceDTO.getWorkEndTime() != null) {
+            long daysBetween = ChronoUnit.DAYS.between(attendanceDTO.getWorkStartTime().toLocalDate(), attendanceDTO.getWorkEndTime().toLocalDate());
+            attendanceDTO.setWorkDays((int) daysBetween + 1); // 근무 일수 설정 (하루를 포함)
+        }
+    }
+
+    // 근무 기록을 저장하는 메서드
+    public void registerAttendance(AttendanceDTO attendanceDTO) {
+        calculateAttendance(attendanceDTO);  // 근무 시간 및 근무 일수 계산
+        attendanceMapper.insertAttendance(attendanceDTO);  // DB에 저장
+    }
+
+    // 출퇴근 기록을 업데이트하는 메서드
+    public void updateAttendance(AttendanceUpdateDTO attendanceUpdateDTO) {
+        // 수정 시 수정 시간을 갱신
+        String updatedAt = getCurrentTimestamp();
+        attendanceUpdateDTO.setUpdatedAt(updatedAt);
+
+        attendanceMapper.updateAttendance(attendanceUpdateDTO);
+    }
+
+    // 현재 시간을 "yyyy-MM-dd HH:mm:ss" 형식으로 반환하는 메서드
+    private String getCurrentTimestamp() {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return now.format(formatter);
+    }
+
+    // DB에서 근무 일수와 근무 시간 계산
+    public void calculateWorkDetails(String empId) {
+        // 근무 일자 (출근한 날 개수)
+        int workDays = attendanceMapper.countWorkDays(empId);
+
+        // 근무 시간 (출근한 날의 근무 시간 합)
+        double workHours = attendanceMapper.calculateWorkHours(empId);
+
+        // 근무 일자와 근무 시간 출력 (로그 혹은 다른 곳에서 사용)
+        System.out.println("근무 일자: " + workDays);
+        System.out.println("근무 시간: " + workHours);
+    }
+    
+    public void recordAttendance(String empId, String configuredStartTime, String actualArrivalTime) {
+        // 출근 시간 비교 후 지각 처리
+        checkLateness(empId, configuredStartTime, actualArrivalTime);
+        
+        // 출근 기록 저장
+        Attendance attendance = new Attendance();
+        attendance.setEmpId(empId);
+        attendance.setArrivalTime(actualArrivalTime);
+        // 기타 출근 기록 처리
+
+        attendanceRepository.save(attendance); // DB에 저장
+    }
+
+    public void checkLateness(String empId, String configuredStartTime, String actualArrivalTime) {
+        // 출근 시간 (예: 9:00)
+        LocalTime startTime = LocalTime.parse(configuredStartTime);
+        // 실제 출근 시간 (예: 9:05)
+        LocalTime arrivalTime = LocalTime.parse(actualArrivalTime);
+
+        // 실제 출근 시간이 설정된 출근 시간보다 늦으면 지각 처리
+        if (arrivalTime.isAfter(startTime)) {
+            long latenessMinutes = Duration.between(startTime, arrivalTime).toMinutes();
+            
+            // 지각 시간과 횟수 업데이트 로직
+            updateLateness(empId, latenessMinutes);
+        }
+    }
+
+    // 지각 정보 업데이트 예시 (DB에 저장)
+    private void updateLateness(String empId, long latenessMinutes) {
+        // DB에 지각 시간과 관련 정보를 업데이트
+        // 예: latenessCount 증가, latenessDates에 날짜 추가 등
+        // DB에 업데이트하는 로직은 Repository를 사용하여 작성
+    }
+    
+    /**
+    * 근태 상세 조회 (지각 여부 포함)
+    * @param empId 사원 ID
+    * @param date 조회할 날짜
+    * @return 근태 상세 정보
+    */
+   public AttendanceDetailDTO getAttendanceDetail(String empId, LocalDate date) {
+       // 근태 상세 정보를 조회 후 반환
+       AttendanceDetailDTO dto = attendanceMapper.getAttendanceDetail(empId, date);
+       
+       // 지각 여부 판단 후 DTO에 세팅
+       return dto;
+   }
+
+   /**
+    * 지각 횟수 및 날짜 조회
+    * @param empId 사원 ID
+    * @return 지각 횟수 및 날짜
+    */
+   public LatenessDTO getLatenessInfo(String empId) {
+       // 지각 횟수 및 날짜를 조회
+       return latenessMapper.getLatenessInfo(empId);
+   }
 }

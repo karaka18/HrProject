@@ -38,23 +38,59 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AttendanceController {
 
+    
+    private final AttendanceService attendanceService;
+    
     @Autowired
-    private AttendanceService attendanceService;
+    public AttendanceController(AttendanceService attendanceService) {
+        this.attendanceService = attendanceService;
+    }
 
     @Autowired
     private HttpSession session;  // HttpSession 객체를 주입받습니다.
 
     /**
+     * 지각 정보를 전달
+     */
+    @GetMapping("/attendance/detail")
+    public ResponseEntity<AttendanceDetailDTO> getAttendanceDetail(@RequestParam String attendanceId) {
+        AttendanceDetailDTO dto = attendanceService.getAttendanceDetail(attendanceId);
+        return ResponseEntity.ok(dto); // 판단 끝난 결과 전달
+    }
+
+    
+    /**
+     * 사용자의 출퇴근 시간을 자동으로 계산
+     */
+    @RequestMapping("/attendance")
+    public String showAttendance(@RequestParam("empId") String empId) {
+        // 예시로 출근 시간과 퇴근 시간을 설정하여 테스트
+        LocalDateTime startTime = LocalDateTime.of(2025, 4, 18, 9, 0); // 9시 출근
+        LocalDateTime endTime = LocalDateTime.of(2025, 4, 18, 18, 0);  // 18시 퇴근
+
+        // 근무 시간을 계산
+        attendanceService.processAttendance(empId, startTime, endTime);
+
+        return "attendance/view"; // 근태 정보를 출력할 뷰로 이동
+    }
+    
+    /**
      * [1. 사용자 출퇴근 기록 조회 + 현황]
      * 사용자가 기간별 출퇴근 기록을 조회하고, 출근/퇴근 여부 및 상태를 확인할 수 있음
      */
-    @GetMapping("/main")
-    public List<AttendanceDetailDTO> getMyAttendanceRecord(
-            @RequestParam String empId,
-            @RequestParam String startDate,
-            @RequestParam String endDate) {
-        return attendanceService.getMyAttendanceRecord(empId, startDate, endDate);
+    @GetMapping("/attendance/main")
+    public String showAttendanceMainPage(Model model, HttpSession session) {
+        String empId = (String) session.getAttribute("empId");
+        
+        AttendanceDTO todayAttendance = attendanceService.getTodayAttendance(empId);
+        
+        model.addAttribute("todayAttendance", todayAttendance);
+        model.addAttribute("loginUser", session.getAttribute("loginUser"));
+        model.addAttribute("empId", empId);
+
+        return "attendance/attendance-main"; // jsp 파일 이름
     }
+
 
     /**
      * [2. 사용자 지각 현황 조회]
@@ -235,5 +271,61 @@ public class AttendanceController {
         return "attendance/attendance-late";  // JSP 파일 이름
     }
     
+    // jsp뷰페이지 - 근태관리 - 근무 조회 페이지로 이동
+    @GetMapping("/attendance-summary")
+    public String viewSummary(HttpSession session, Model model) {
+        String empId = (String) session.getAttribute("empId");
 
+        // 근태 기록 조회
+        List<AttendanceDetailDTO> attendanceList = attendanceService.getAttendanceByEmpId(empId);
+        model.addAttribute("attendanceList", attendanceList);
+
+        return "attendance/attendance-summary";//JSP 파일 이름
+    }
+    
+    
+    // [4. 사용자 근무 상태 조회 화면 호출  - AttendanceStatusId]
+    @GetMapping("/attendance/status")
+    public String showAttendanceStatus(Model model) {
+        List<AttendanceStatusDTO> statusList = attendanceService.getAttendanceStatusList();
+        model.addAttribute("statusList", statusList);
+        return "attendance/attendance-status"; // 뷰 파일 이름에 맞게 수정
+    }
+    
+    // 출근 시간 입력 받아 자동으로 지각 처리
+    @PostMapping("/checkin")
+    public ResponseEntity<String> checkIn(@RequestBody AttendanceRequest request) {
+        // 출근 시간 기록 + 지각 여부 판단 및 반영
+        attendanceService.recordAttendance(request.getEmpId(), request.getConfiguredStartTime(), request.getActualArrivalTime());
+        return ResponseEntity.ok("출근 처리가 완료되었습니다.");
+    }
+
+    /**
+     * 근태 상세 조회 (지각 여부 포함)
+     * @param empId 사원 ID
+     * @param date 조회할 날짜
+     * @return 근태 상세 정보 (지각 여부 포함)
+     */
+    @GetMapping("/detail/{empId}/{date}")
+    public AttendanceDetailDTO getAttendanceDetail(@PathVariable String empId, @PathVariable String date) {
+        // 날짜를 LocalDate로 변환
+        LocalDate attendanceDate = LocalDate.parse(date);
+        
+        // Service를 호출하여 근태 상세 정보 조회
+        AttendanceDetailDTO attendanceDetailDTO = attendanceService.getAttendanceDetail(empId, attendanceDate);
+        
+        return attendanceDetailDTO;
+    }
+
+    /**
+     * 지각 횟수 및 날짜 조회
+     * @param empId 사원 ID
+     * @return 지각 횟수 및 날짜
+     */
+    @GetMapping("/lateness/{empId}")
+    public LatenessDTO getLatenessInfo(@PathVariable String empId) {
+        // 지각 횟수 및 날짜를 Service에서 조회
+        return attendanceService.getLatenessInfo(empId);
+    }
+    
 }

@@ -1,6 +1,9 @@
 package com.itwill.persistence;
 
+import org.apache.ibatis.annotations.Mapper;
+
 import com.itwill.domain.LoginHistoryVO;
+
 
 public interface LoginHistoryDAO {
 	

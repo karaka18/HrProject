@@ -1,3 +1,4 @@
+console.log("💡 script.js loaded!");
 document.addEventListener('DOMContentLoaded', function() {
     // 메뉴 토글 기능
     const menuToggles = document.querySelectorAll('.menu-toggle');

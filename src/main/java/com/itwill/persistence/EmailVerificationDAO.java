@@ -1,6 +1,9 @@
 package com.itwill.persistence;
 
+import org.apache.ibatis.annotations.Mapper;
+
 import com.itwill.domain.EmailVerificationVO;
+
 
 public interface EmailVerificationDAO {
 	// emp_id로 인증 정보 조회

@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.itwill.domain.MemberVO;
@@ -20,6 +21,7 @@ public class MemberServiceImpl implements MemberService {
 	   = LoggerFactory.getLogger(MemberServiceImpl.class);
 	
 	@Inject
+	@Qualifier("memberDAO")
 	private MemberDAO mdao;
 	
 //	@Override

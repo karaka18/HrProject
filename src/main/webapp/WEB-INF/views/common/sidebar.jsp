@@ -1,6 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<%
+	Integer roleId = (Integer) session.getAttribute("role_id");
+	request.setAttribute("roleId", roleId); // JSTL에서 쓸 수 있게 전달
+%>
+
 <div class="sidebar">
     <ul class="menu-list">
         <li class="menu-item ${param.menu == 'personnel' ? 'active' : ''} has-submenu">
@@ -28,7 +33,9 @@
             </a>
             <ul class="submenu ${param.menu == 'salary' ? 'open' : ''}">
                 <li><a href="<c:url value='/salary' />">급여명세서 조회</a></li>
-                <li><a href="<c:url value='/salary/admin' />">급여 지급 확정 처리</a></li>
+                <c:if test="${roleId == 1 || roleId == 2}">
+		            <li><a href="<c:url value='/salary/admin' />">급여 지급 확정 처리</a></li>
+		        </c:if>
             </ul>
         </li>
         <li class="menu-item ${param.menu == 'approval' ? 'active' : ''} has-submenu">
@@ -38,7 +45,9 @@
             <ul class="submenu ${param.menu == 'approval' ? 'open' : ''}">
                 <li><a href="<c:url value='/approval/apply' />">결재 신청</a></li>
                 <li><a href="<c:url value='/approval/user' />">결재 신청 내역</a></li>
-                <li><a href="<c:url value='/approval/admin' />">결재 승인/반려 처리</a></li>
+                <c:if test="${sessionScope.role_id == 1 || sessionScope.role_id == 2}">
+		            <li><a href="<c:url value='/salary/admin' />">급여 지급 확정 처리</a></li>
+		        </c:if>
             </ul>
         </li>
         <li class="menu-item ${param.menu == 'notice' ? 'active' : ''} has-submenu">

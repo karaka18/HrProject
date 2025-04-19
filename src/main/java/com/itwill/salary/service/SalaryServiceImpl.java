@@ -133,9 +133,9 @@ public class SalaryServiceImpl implements SalaryService {
         int basePay;
         switch (posId) {
             case "사원": basePay = 2800000; break;
-            case "대리": basePay = 30000000; break;
+            case "대리": basePay = 3000000; break;
             case "과장": basePay = 3500000; break;
-            case "팀장": basePay = 40000000; break;
+            case "팀장": basePay = 4000000; break;
             case "부장": basePay = 4500000; break;
             default: basePay = 2500000; break; // 기본값
         }

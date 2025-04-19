@@ -3,12 +3,16 @@ package com.itwill.attendance.dto;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.sql.Time;
+import java.sql.Timestamp;
 
+import lombok.Builder;
 import lombok.Data;
 
 //근태 관련 기본 DTO
 
 @Data
+@Builder 
 public class AttendanceDTO {
     private String attendanceId;
     private String empId;
@@ -19,5 +23,7 @@ public class AttendanceDTO {
     private String configuredStartTime;  // 출근 시간 설정
     private int latenessCount;           // 지각 횟수
     private String latenessDates;        // 지각 날짜들
-    
+    private Timestamp workDate;
+    private Time checkInTime;
+    private Timestamp createdAt; 
 }

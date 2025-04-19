@@ -1,4 +1,4 @@
-package com.itwill.attendance.controller;
+package com.itwill.attendance.dto;
 
 import javax.servlet.http.HttpSession;
 

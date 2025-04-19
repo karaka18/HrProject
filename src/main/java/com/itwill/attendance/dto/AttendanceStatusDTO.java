@@ -1,5 +1,7 @@
 package com.itwill.attendance.dto;
 
+import java.time.LocalDate;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -34,12 +36,11 @@ public class AttendanceStatusDTO {
         } else if (attendanceDTO.getWorkStartTime() != null && attendanceDTO.getWorkEndTime() != null) {
             return "퇴근";
         }
-        // 출장 처리 (예시)
-        if (attendanceDTO.getWorkStartTime() != null && /* 출장 관련 조건 */) {
+        if (attendanceDTO.getWorkStartTime() != null /* && 출장 관련 조건 */) {
             return "출장";
         }
-        // 휴가 처리 (예시)
-        if (attendanceDTO.getWorkStartTime() != null && /* 휴가 관련 조건 */) {
+
+        if (attendanceDTO.getWorkStartTime() != null /* && 휴가 관련 조건 */) {
             return "휴가";
         }
         return "결근"; // 기본 상태

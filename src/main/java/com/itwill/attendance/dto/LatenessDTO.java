@@ -26,4 +26,4 @@ public class LatenessDTO {
     private String latenessDates;       // 지각 날짜들 (예: "2025-04-01, 2025-04-02")
 }
 
-}
+

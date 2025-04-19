@@ -48,4 +48,6 @@ public class AttendanceDetailDTO {
     // 생성/수정 시간
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
+    
+    private String isLate;
 }

@@ -14,8 +14,11 @@ public class AttendanceUpdateDTO {
 
     private String attendanceId;      // 출퇴근 기록 ID
     private String empId;             // 사원 ID
-    private String attendanceDate;    // 출퇴근 일자
+//    private String attendanceDate;    // 출퇴근 일자 -> 출퇴근 일자가 꼭 필요?
     private String checkInTime;       // 출근 시간
     private String checkOutTime;      // 퇴근 시간
-    private String attendanceStatus;  // 근태 상태 (출근, 퇴근, 결근 등)
+    private String attendanceStatus;  // 근태 상태 (출근, 퇴근, 결근 등)-> 출결 상태 구분용 필드로 활용 가능....?
+    private String updatedAt;         // 수정 시간 (TIMESTAMP)
+    private String createdAt;         // 생성 시간 (TIMESTAMP)
+
 }

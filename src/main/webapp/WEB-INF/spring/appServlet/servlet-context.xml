@@ -90,11 +90,6 @@
     <!-- 이미지 파일 매핑 -->
     <mvc:resources mapping="/image/**" location="/image/" />
 
-    
-
-    <!-- 이미지 파일 매핑 -->
-
-    <mvc:resources mapping="/image/**" location="/image/" />
 
 
 

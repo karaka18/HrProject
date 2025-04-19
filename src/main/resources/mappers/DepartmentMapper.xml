@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itwill.employee.persistence.DepartmentDAO">
+
+    <select id="getAllDepartments" resultType="com.itwill.employee.domain.DepartmentVO">
+        SELECT * FROM DEPARTMENT
+    </select>
+
+    <insert id="addDepartment" parameterType="com.itwill.employee.domain.DepartmentVO">
+        INSERT INTO DEPARTMENT (dep_id, dep_name, dep_register, dep_registdate)
+        VALUES (#{depId}, #{depName}, #{depRegister}, NOW())
+    </insert>
+
+    <update id="updateDepartment" parameterType="com.itwill.employee.domain.DepartmentVO">
+        UPDATE DEPARTMENT
+        SET dep_name = #{depName}
+        WHERE dep_id = #{depId}
+    </update>
+
+    <delete id="deleteDepartment" parameterType="String">
+	    DELETE FROM DEPARTMENT WHERE dep_id = #{value}
+	</delete>
+
+    <select id="getEmployeesByDeptId" parameterType="String" resultType="com.itwill.employee.domain.EmployeeVO">
+        SELECT 
+            emp_id, emp_name, emp_email, emp_gender, emp_phone, 
+            dep_id, pos_id, rank_id, emp_address
+        FROM EMPLOYEE
+        WHERE dep_id = #{deptId}
+    </select>
+
+</mapper>

@@ -57,7 +57,7 @@
 
     <!-- MyBatis 매퍼 인터페이스 등록 -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-      <property name="basePackage" value="com.itwill.approval.mapper, com.itwill.attendance.mapper, com.itwill.mapper"/>
+       <property name="basePackage" value="com.itwill.approval.mapper, com.itwill.attendance.mapper, com.itwill.mapper, com.itwill.employee.persistence"/>
     </bean>
     
     <!-- 컴포넌트 스캔 설정 (Controller 제외) -->

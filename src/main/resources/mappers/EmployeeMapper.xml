@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itwill.employee.persistence.EmployeeDAO">
+    
+    
+   <!-- 직원 전체 조회 -->
+    <select id="getAllEmployees" resultType="com.itwill.employee.domain.EmployeeVO">
+        SELECT * FROM EMPLOYEE
+    </select>
+
+    <!-- 직원 ID로 조회 -->
+    <select id="getEmployeeById" parameterType="String" resultType="com.itwill.employee.domain.EmployeeVO">
+        SELECT * FROM EMPLOYEE WHERE emp_id = #{empId}
+    </select>
+
+    <!-- 직원 정보 수정 -->
+    <update id="updateEmployee" parameterType="com.itwill.employee.domain.EmployeeVO">
+        UPDATE EMPLOYEE
+        SET dep_id = #{depId},
+            dep_name = #{depName},
+            pos_id = #{posId},
+            rank_id = #{rankId},
+            emp_cn = #{empCn},
+            emp_modifier = #{empModifier},
+            emp_modifydate = #{empModifydate}
+        WHERE emp_id = #{empId}
+    </update>
+
+    <!-- 퇴사일 수정 -->
+    <update id="updateResignationDate">
+        UPDATE EMPLOYEE
+        SET emp_qd = #{empQd}
+        WHERE emp_id = #{empId}
+    </update>
+    
+    <delete id="deleteEmployee" parameterType="string">
+	    DELETE FROM EMPLOYEE WHERE emp_id = #{empId}
+	</delete>
+
+</mapper>

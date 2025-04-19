@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+
 <jsp:include page="../../common/header.jsp" />
 <jsp:include page="../../common/admin-sidebar.jsp">
     <jsp:param name="menu" value="personnel" />
@@ -81,66 +82,23 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td><input type="checkbox" class="employee-select"></td>
-                <td>2510001</td>
-                <td>김대표</td>
-                <td>경영진</td>
-                <td>대표이사</td>
-                <td>ceo@hrgenie.com</td>
-                <td>010-1234-5678</td>
-                <td>2020-01-01</td>
-                <td>
-                    <button class="btn btn-sm btn-info view-btn" data-id="2510001">조회</button>
-                    <button class="btn btn-sm btn-warning edit-btn" data-id="2510001">수정</button>
-                    <button class="btn btn-sm btn-danger delete-btn" data-id="2510001">삭제</button>
-                </td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="employee-select"></td>
-                <td>2510010</td>
-                <td>이사장</td>
-                <td>경영지원본부</td>
-                <td>이사</td>
-                <td>director1@hrgenie.com</td>
-                <td>010-2345-6789</td>
-                <td>2020-02-15</td>
-                <td>
-                    <button class="btn btn-sm btn-info view-btn" data-id="2510010">조회</button>
-                    <button class="btn btn-sm btn-warning edit-btn" data-id="2510010">수정</button>
-                    <button class="btn btn-sm btn-danger delete-btn" data-id="2510010">삭제</button>
-                </td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="employee-select"></td>
-                <td>2510020</td>
-                <td>정부장</td>
-                <td>인사팀</td>
-                <td>부장</td>
-                <td>hrmanager@hrgenie.com</td>
-                <td>010-3456-7890</td>
-                <td>2020-03-10</td>
-                <td>
-                    <button class="btn btn-sm btn-info view-btn" data-id="2510020">조회</button>
-                    <button class="btn btn-sm btn-warning edit-btn" data-id="2510020">수정</button>
-                    <button class="btn btn-sm btn-danger delete-btn" data-id="2510020">삭제</button>
-                </td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="employee-select"></td>
-                <td>2510035</td>
-                <td>홍길동</td>
-                <td>인사팀</td>
-                <td>사원</td>
-                <td>hrgenie@naver.com</td>
-                <td>010-1111-1111</td>
-                <td>2025-03-27</td>
-                <td>
-                    <button class="btn btn-sm btn-info view-btn" data-id="2510035">조회</button>
-                    <button class="btn btn-sm btn-warning edit-btn" data-id="2510035">수정</button>
-                    <button class="btn btn-sm btn-danger delete-btn" data-id="2510035">삭제</button>
-                </td>
-            </tr>
+            <c:forEach var="employee" items="${employees}">
+                <tr>
+                    <td><input type="checkbox" class="employee-select"></td>
+                    <td>${employee.empId}</td>
+                    <td>${employee.empName}</td>
+                    <td>${employee.depName}</td>
+                    <td>${employee.rankId}</td>
+                    <td>${employee.empEmail}</td>
+                    <td>${employee.empPhone}</td>
+                    <td><fmt:formatDate value="${employee.empJd}" pattern="yyyy-MM-dd" /></td>
+                    <td>
+                        <a href="/admin/employee/detail/${employee.empId}" class="view-link">조회</a>
+						<a href="/admin/employee/edit/${employee.empId}" class="edit-link">수정</a>
+						
+                    </td>
+                </tr>
+            </c:forEach>
         </tbody>
     </table>
     
@@ -159,3 +117,87 @@
 </div>
 
 <jsp:include page="../../common/footer.jsp" />
+
+<!-- JS 파일 + 기능 스크립트 -->
+<script src="<c:url value='/resources/js/script.js' />"></script>
+<script src="<c:url value='/resources/js/session-timer.js' />"></script>
+
+<!-- 버튼 동작 스크립트 추가 -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // 조회 버튼
+    document.querySelectorAll(".view-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const empId = btn.dataset.id;
+            location.href = `/admin/employee/detail/${empId}`;
+        });
+    });
+
+    // 수정 버튼
+    document.querySelectorAll(".edit-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const empId = btn.dataset.id;
+            location.href = `/admin/employee/edit/${empId}`;
+        });
+    });
+
+    // 삭제 버튼
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const empId = btn.dataset.id;
+
+            if (confirm("정말 삭제하시겠습니까?")) {
+                fetch(`/admin/employee/delete`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: `empId=${empId}`
+                })
+                .then(res => {
+                    if (res.ok) {
+                        alert("삭제되었습니다.");
+                        location.reload();
+                    } else {
+                        alert("삭제에 실패했습니다.");
+                    }
+                })
+                .catch(() => {
+                    alert("요청 중 오류가 발생했습니다.");
+                });
+            }
+        });
+    });
+});
+</script>
+
+<style>
+.view-link, .edit-link {
+    display: inline-block;
+    padding: 4px 10px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    margin-right: 5px;
+}
+
+.view-link {
+    background-color: #17a2b8;
+}
+
+.edit-link {
+    background-color: #ffc107;
+    color: black;
+}
+
+.view-link:hover, .edit-link:hover {
+    opacity: 0.85;
+}
+</style>
+
+
+
+</body>
+</html>

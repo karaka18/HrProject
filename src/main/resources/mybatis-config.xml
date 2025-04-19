@@ -13,6 +13,7 @@
 
     <!-- DTO 클래스들이 위치한 패키지를 등록 -->
     <typeAliases>
+    <package name="com.itwill.employee.domain" />
 <!--         <package name="com.itwill.attendance.record" /> -->
         <package name="com.itwill.approval.dto" />
     </typeAliases>

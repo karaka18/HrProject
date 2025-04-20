@@ -1,29 +1,27 @@
 package com.itwill.attendance.dto;
 
+import java.time.LocalDate;
+
+import java.time.LocalDateTime;
+
 import lombok.Builder;
 import lombok.Data;
-
-/**
- * [2.사용자 지각 현황 조회 DTO]
- */
 
 @Data
 @Builder
 public class LatenessDTO {
-    private String attendanceId;       // 근태 기록 ID
-    private String empId;              // 사원 ID
-    private String empName;            // 사원 이름
-    private String departmentName;     // 부서 이름
-    private String date;               // 날짜
-    private String arrivalTime;        // 출근 시간
-//    private String reason;             // 지각 사유
-//    private String approvalStatus;     // 승인 상태 (대기/승인/반려)
-//    private int lateMinutes;           // 지각 시간(분)
+
+    private String attendanceId;       // 근태 ID (DB에 있음)
+    private String empId;              // 사원 ID (DB에 있음)
+    private String empName;            // 사원 이름 (JOIN: employee) ⚠️ DB에 없음
+    private String departmentName;     // 부서명 (JOIN: department) ⚠️ DB에 없음
+    private LocalDate workDate;        // 근무 일자 (DB에 있음)
+    private LocalDateTime checkInTime; // 출근 시간 (DB: check_in_time)
+    private String isLate;             // 지각 여부 (앱에서 계산) ⚠️ DB에 없음
+
+    private LocalDate lateDate;  // 지각 날짜
+    private LocalTime lateDuration; // 지각 시간
+    private String lateReason;   // 지각 사유 (사유서에서 가져옴)
+    private String status;       // 확인 상태 (확인, 미확인)
     
-    
-    private String configuredStartTime; // 출근 시간 설정
-    private int latenessCount;          // 지각 횟수
-    private String latenessDates;       // 지각 날짜들 (예: "2025-04-01, 2025-04-02")
 }
-
-

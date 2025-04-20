@@ -19,7 +19,7 @@
     <!-- JPA 설정 -->
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 	    <property name="dataSource" ref="dataSource" />
-	    <property name="packagesToScan" value="com.itwill.attendance" />
+	    <property name="packagesToScan" value="com.itwill.attendance.LeaveStatus" />
 	    
 	    <property name="jpaVendorAdapter">
 	        <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
@@ -34,7 +34,7 @@
 	</bean>
 	
 	 <!-- ⭐ JPA Repository 스캔 추가 -->
-    <jpa:repositories base-package="com.itwill.attendance" />
+    <jpa:repositories base-package="com.itwill.attendance.LeaveStatus" />
     
     
 

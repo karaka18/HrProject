@@ -1,161 +1,183 @@
 package com.itwill.attendance.service;
 
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-
+import com.itwill.attendance.dto.AttendanceDTO;
+import com.itwill.attendance.dto.AttendanceDetailDTO;
+import com.itwill.attendance.mapper.AttendanceMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import com.itwill.attendance.dto.*;
-import com.itwill.attendance.mapper.AttendanceMapper;
-
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AttendanceServiceImpl implements AttendanceService {
 
     private final AttendanceMapper attendanceMapper;
-
-    // ✅ 출근 처리
+    
+    //사용자 출퇴근 기록부 및 현황
     @Override
-    public void clockIn(String empId) {
-        // 이미 출근했는지 확인
-        if (attendanceMapper.hasCheckedInToday(empId)) return;
+    public AttendanceDetailDTO getDailyAttendance(String empId, LocalDate date) {
+        AttendanceDetailDTO detail = attendanceMapper.selectAttendanceDetail(empId, date);
+        
+        // ⚠️ DB에 없는 지각 여부 판단 로직 (출근 시간이 09:00 이후면 지각)
+        LocalTime standardTime = LocalTime.of(9, 0);
+        if (detail != null && detail.getCheckInTime() != null) {
+            boolean isLate = detail.getCheckInTime().toLocalTime().isAfter(standardTime);
+            detail.setIsLate(isLate ? "예" : "아니오");
+        } else {
+            detail.setIsLate("정보 없음");
+        }
 
-        // 현재 시간
-        LocalDateTime now = LocalDateTime.now();
+        return detail;
+    }
+    
+    //사용자 지각 현황
+    @Override
+    public List<LateAttendanceDTO> getLateAttendanceList(String empId) {
+        List<LateAttendanceDTO> allAttendances = attendanceMapper.selectLateAttendancesByEmpId(empId);
 
-        // 출근 기록 생성
+        return allAttendances.stream()
+            .filter(dto -> dto.getCheckInTime() != null &&
+                           dto.getCheckInTime().toLocalTime().isAfter(LocalTime.of(9, 0)))
+            .map(dto -> {
+                dto.setIsLate("예"); // 지각만 추출
+                return dto;
+            })
+            .collect(Collectors.toList());
+    }
+
+    
+    //사용자 근무 조회
+    @Override
+    public List<WorkRecordDTO> getWorkRecords(String empId, LocalDate startDate, LocalDate endDate) {
+        List<WorkRecordDTO> records = attendanceMapper.selectWorkRecordsByEmpIdAndPeriod(empId, startDate, endDate);
+
+        return records.stream().map(record -> {
+            long minutes = Duration.between(record.getCheckInTime(), record.getCheckOutTime()).toMinutes();
+            record.setWorkMinutes(minutes);
+            return record;
+        }).collect(Collectors.toList());
+    }
+
+    //사용자 근태 항목
+    @Override
+    public List<AttendanceStatusDTO> getAttendanceStatus(String empId, LocalDate startDate, LocalDate endDate) {
+        return attendanceMapper.selectAttendanceStatusByEmpIdAndPeriod(empId, startDate, endDate);
+    }
+
+    //사용자 휴가 내역 및 신청
+    @Override
+    public List<LeaveDTO> getLeaveHistory(String empId, LocalDate startDate, LocalDate endDate) {
+        return attendanceMapper.selectLeaveHistoryByEmpIdAndPeriod(empId, startDate, endDate);
+    }
+
+    @Override
+    public int getRemainingLeaveDays(String empId) {
+        return attendanceMapper.selectRemainingLeaveDays(empId);
+    }
+
+    
+    //관리자 출퇴근 기록부 조회 및 현황
+    @Override
+    public List<AttendanceDetailDTO> getAttendanceDetails(LocalDate startDate, LocalDate endDate) {
+        return attendanceMapper.selectAttendanceDetails(startDate, endDate);
+    }
+
+    @Override
+    public AttendanceDetailDTO getAttendanceDetailByEmpIdAndDate(String empId, LocalDate date) {
+        return attendanceMapper.selectAttendanceDetailByEmpIdAndDate(empId, date);
+    }
+
+    //관리자 휴가 일수 조회
+    @Override
+    public LeaveStatusDTO getLeaveStatusByEmpId(String empId) {
+        return leaveMapper.selectLeaveStatusByEmpId(empId);
+    }
+
+    @Override
+    public List<LeaveStatusDTO> getAllLeaveStatuses() {
+        return leaveMapper.selectAllLeaveStatuses();
+    }
+
+    //관리자 지각 현황 조회
+    @Override
+    public List<LatenessAdminDTO> getLatenessByPeriodForAdmin(LocalDate startDate, LocalDate endDate) {
+        return attendanceMapper.selectLatenessByPeriodForAdmin(startDate, endDate);
+    }
+    
+    //관리자 근무 형태 현황 조회
+    @Override
+    public List<WorkTypeAdminDTO> getWorkTypeByPeriodForAdmin(LocalDate startDate, LocalDate endDate) {
+        return attendanceMapper.selectWorkTypeByPeriodForAdmin(startDate, endDate);
+    }
+    
+    // 관리자 근무 입력
+    @Override
+    public void insertWorkRecord(WorkInputDTO workInputDTO) {
+        attendanceMapper.insertWorkRecord(workInputDTO);
+    }
+
+    // 관리자 근무 기록 수정 (출퇴근 시간 수정 등)
+    @Override
+    public void updateWorkRecord(WorkInputDTO workInputDTO) {
+        attendanceMapper.updateWorkRecord(workInputDTO);
+    }
+    
+    
+    
+    
+    
+    
+    
+
+    // 1. 출근 기록
+    @Override
+    public void checkIn(String empId) {
         AttendanceDTO dto = AttendanceDTO.builder()
-            .attendanceId(UUID.randomUUID().toString())
-            .empId(empId)
-            .workDate(Timestamp.valueOf(now))
-            .checkInTime(Time.valueOf(now.toLocalTime()))
-            .createdAt(Timestamp.valueOf(now))
-            .build();
+                .empId(empId)
+                .attendDate(LocalDate.now())
+                .checkInTime(LocalTime.now())
+                .build();
 
-        attendanceMapper.insertAttendance(dto);
-    }
-
-    // ✅ 퇴근 처리
-    @Override
-    public void clockOut(String empId) {
-        LocalDateTime now = LocalDateTime.now();
-        attendanceMapper.updateClockOut(empId, now);
-    }
-
-    // ✅ 오늘의 출근/퇴근 데이터 가져오기
-    @Override
-    public AttendanceDTO getTodayAttendance(String empId) {
-        return attendanceMapper.selectTodayAttendance(empId);
-    }
-
-    // ✅ 날짜별 상세 조회 (출근시간, 퇴근시간, 지각/조퇴 판단 포함)
-    @Override
-    public AttendanceDetailDTO getAttendanceDetail(String empId, LocalDate date) {
-        AttendanceDetailDTO dto = attendanceMapper.getAttendanceDetail(empId, date);
-
-        if (dto == null) return null;
-
-        // 지각 기준: 09:00
-        if (dto.getCheckInTime() != null && dto.getCheckInTime().toLocalDateTime().toLocalTime().isAfter(java.time.LocalTime.of(9, 0))) {
-            dto.setIsLate("Y");
+        // 이미 기록이 있는지 확인하고 없으면 insert
+        AttendanceDTO existing = attendanceMapper.selectTodayAttendance(empId, LocalDate.now());
+        if (existing == null) {
+            attendanceMapper.insertCheckIn(dto);
+            log.info("출근 기록 완료: {}", dto);
         } else {
-            dto.setIsLate("N");
+            log.warn("이미 출근 기록이 존재합니다: {}", existing);
+        }
+    }
+
+    // 2. 퇴근 기록
+    @Override
+    public void checkOut(String empId) {
+        LocalDate today = LocalDate.now();
+        LocalTime checkOutTime = LocalTime.now();
+
+        attendanceMapper.updateCheckOut(empId, today, checkOutTime);
+        log.info("퇴근 기록 완료 - empId: {}, 시간: {}", empId, checkOutTime);
+    }
+
+    // 3. 특정 날짜의 출근/퇴근 현황 조회
+    @Override
+    public AttendanceDetailDTO getDailyAttendance(String empId, LocalDate date) {
+        AttendanceDetailDTO detail = attendanceMapper.selectAttendanceDetail(empId, date);
+
+        // 기준 출근 시간: 오전 9시
+        LocalTime standardTime = LocalTime.of(9, 0, 0);
+        if (detail.getCheckInTime() != null) {
+            boolean isLate = detail.getCheckInTime().isAfter(standardTime);
+            detail.setIsLate(isLate ? "예" : "아니오");
+        } else {
+            detail.setIsLate("출근 기록 없음");
         }
 
-        // 조퇴 기준: 18:00
-        if (dto.getCheckOutTime() != null && dto.getCheckOutTime().toLocalDateTime().toLocalTime().isBefore(java.time.LocalTime.of(18, 0))) {
-            dto.setIsEarlyLeave("Y");
-        } else {
-            dto.setIsEarlyLeave("N");
-        }
-
-        return dto;
+        return detail;
     }
 
-    // ✅ 사원별 전체 출퇴근 기록
-    @Override
-    public List<AttendanceDetailDTO> getMyAttendanceRecord(String empId, String startDate, String endDate) {
-        return attendanceMapper.getMyAttendanceRecord(empId, startDate, endDate);
-    }
-
-    @Override
-    public List<LatenessDTO> getMyLateness(String empId, String startDate, String endDate) {
-        return attendanceMapper.getMyLateness(empId, startDate, endDate);
-    }
-
-    @Override
-    public WorkSummaryDTO getWorkSummary(String empId, String startDate, String endDate) {
-        return attendanceMapper.getWorkSummary(empId, startDate, endDate);
-    }
-
-    @Override
-    public List<AttendanceStatusDTO> getMyAttendanceStatus(String empId, String startDate, String endDate) {
-        return attendanceMapper.getMyAttendanceStatus(empId, startDate, endDate);
-    }
-
-    @Override
-    public List<AttendanceDetailDTO> getAttendanceRecordsByCategory(String empId, String departmentId, String startDate, String endDate) {
-        return attendanceMapper.getAttendanceRecordsByCategory(empId, departmentId, startDate, endDate);
-    }
-
-    @Override
-    public void updateAttendanceRecord(AttendanceUpdateDTO dto) {
-        attendanceMapper.updateAttendanceRecord(dto);
-    }
-
-    @Override
-    public List<LatenessDTO> getAllLatenessRecords(String empId, String departmentId, String startDate, String endDate) {
-        return attendanceMapper.getAllLatenessRecords(empId, departmentId, startDate, endDate);
-    }
-
-    @Override
-    public List<AttendanceStatusDTO> getAllWorkStatus(String empId, String startDate, String endDate) {
-        return attendanceMapper.getAllWorkStatus(empId, startDate, endDate);
-    }
-
-    @Override
-    public List<AttendanceWarningDTO> getAttendanceSummaryForAdmin(String startDate, String endDate) {
-        return attendanceMapper.getAttendanceSummaryForAdmin(startDate, endDate);
-    }
-
-    @Override
-    public List<AttendanceDetailDTO> getAttendanceByEmpId(String empId) {
-        return attendanceMapper.selectAttendanceByEmpId(empId);
-    }
-
-    @Override
-    public List<AttendanceStatusDTO> getAttendanceStatusList() {
-        return attendanceMapper.selectAttendanceStatusList();
-    }
-
-    @Override
-    public List<LeaveHistoryDTO> getMyTotalLeaveHistory(String empId) {
-        return attendanceMapper.getMyTotalLeaveHistory(empId);
-    }
-
-    @Override
-    public List<LeaveHistoryDTO> getMyLeaveHistoryByDate(String empId, String startDate, String endDate) {
-        return attendanceMapper.getMyLeaveHistoryByDate(empId, startDate, endDate);
-    }
-
-    @Override
-    public LeaveBalanceDTO getMyLeaveBalance(String empId) {
-        return attendanceMapper.getMyLeaveBalance(empId);
-    }
-
-    @Override
-    public void applyForLeave(LeaveDTO leaveDTO) {
-        attendanceMapper.applyForLeave(leaveDTO);
-    }
-
-    @Override
-    public void updateLeaveDays(LeaveUpdateRequestDTO dto) {
-        attendanceMapper.updateLeaveDays(dto);
-    }
 }

@@ -1,9 +1,10 @@
-package com.itwill.attendance.dto;
+ackage com.itwill.attendance.dto;
 
 import lombok.Builder;
 import lombok.Data;
 
 /**
+ * %%%
  * [5. 사용자 휴가 내역 조회 DTO]
  * - 사용자가 신청한 휴가 기록 및 승인 현황을 담는 DTO
  * - 사용자가 본인의 휴가 내역을 조회할 때 사용

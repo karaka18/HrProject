@@ -20,6 +20,43 @@
         </button>
     </div>
     
+    <!-- 사원 추가 모달 폼 -->
+	<!-- <div id="addEmployeeModal" style="display:none; position:fixed; top:20%; left:40%; background:white; border:1px solid #ccc; padding:20px; z-index:9999;">
+	    <h4>사원 추가</h4>
+	    <form id="addEmployeeForm">
+	        <div class="form-group">
+	            <label for="empId">사원번호</label>
+	            <input type="text" name="empId" id="empId" class="form-control" required />
+	        </div>
+	        <button type="submit" class="btn btn-primary">추가</button>
+	        <button type="button" class="btn btn-secondary" id="closeModalBtn">취소</button>
+	    </form>
+	</div> -->
+	<div id="addEmployeeModal" style="display:none; position:fixed; top:20%; left:40%; background:white; border:1px solid #ccc; padding:20px; z-index:9999;">
+	    <h4>사원 추가</h4>
+	    <form id="addEmployeeForm">
+	        <!-- <div class="form-group">
+	            <label for="empId">사원번호</label>
+	            <input type="text" name="empId" id="empId" class="form-control" required disabled />
+	        </div> -->
+	        <div class="form-group">
+	            <label for="department">부서</label>
+	            <select id="department" name="department" class="form-control">
+	                <option value="01">인사팀(01)</option>
+	                <option value="02">개발팀(02)</option>
+	                <option value="03">영업팀(03)</option>
+	                <option value="04">마케팅팀(04)</option>
+	            </select>
+	        </div>
+	        <div class="form-group">
+	            <label for="empSeq">사원번호 뒤 3자리</label>
+	            <input type="text" id="empSeq" name="empSeq" class="form-control" required />
+	        </div>
+	        <button type="submit" class="btn btn-primary">추가</button>
+	        <button type="button" class="btn btn-secondary" id="closeModalBtn">취소</button>
+	    </form>
+	</div>
+    
     <div class="search-box">
         <form action="<c:url value='/admin/personnel/info' />" method="get">
             <div class="form-row">
@@ -125,6 +162,24 @@
 <!-- 버튼 동작 스크립트 추가 -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+	
+	// 요소들
+	const addBtn = document.getElementById("addEmployeeBtn");
+	const modal = document.getElementById("addEmployeeModal");
+	const closeBtn = document.getElementById("closeModalBtn");
+	const addForm = document.getElementById("addEmployeeForm");
+
+	// 모달 열기
+	addBtn.addEventListener("click", () => {
+		modal.style.display = "block";
+	});
+
+	// 모달 닫기
+	closeBtn.addEventListener("click", () => {
+		modal.style.display = "none";
+	});
+	
+	
     // 조회 버튼
     document.querySelectorAll(".view-btn").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -167,6 +222,71 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
         });
+    });
+});
+</script>
+
+<script>
+/* document.getElementById("addEmployeeForm").addEventListener("submit", function (e) {
+    e.preventDefault(); // 기본 제출 방지
+
+    const empId = document.getElementById("empId").value;
+
+    fetch("/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `empId=\${encodeURIComponent(empId)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload(); // 또는 새로 추가된 사원만 갱신
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(() => {
+        alert("요청 중 오류가 발생했습니다.");
+    });
+}); */
+
+document.getElementById("addEmployeeForm").addEventListener("submit", function (e) {
+    e.preventDefault(); // 기본 제출 방지
+
+    const year = new Date().getFullYear().toString();
+    const department = document.getElementById("department").value; // 부서코드
+    const empSeq = document.getElementById("empSeq").value.padStart(3, "0"); // 순번 앞자리 0채우기
+
+    const empId = year + department + empSeq; // 최종 사원번호
+    
+ // URLSearchParams를 사용해 데이터를 URL 인코딩 처리
+    const params = new URLSearchParams();
+    params.append('empId', empId);
+
+    fetch("/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: params.toString()  // URLSearchParams로 변환된 데이터를 body로 전송
+    })
+    .then(function(response) {
+    	return response.json();
+	})
+	.then(function(data) {
+	    console.log("서버에서 받은 데이터:", data);
+	    if (data.success) {
+	        alert(data.message + "\n추가된 사원번호: " + data.empId);
+	        location.reload();
+	    } else {
+	        alert(data.message);
+	    }
+	})
+    .catch(function(err) {
+        alert("요청 중 오류가 발생했습니다.");
     });
 });
 </script>

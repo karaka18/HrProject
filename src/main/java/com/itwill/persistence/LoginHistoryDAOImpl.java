@@ -34,6 +34,11 @@ public class LoginHistoryDAOImpl implements LoginHistoryDAO {
     	String status = sqlSession.selectOne(namespace + ".checkAccountLocked", empId);
         return "LOCKED".equals(status);
     }
+
+	@Override
+	public LoginHistoryVO findLatestByEmpId(String empId) {
+		return sqlSession.selectOne(namespace + ".findLatestByEmpId", empId);
+	}
     
     
     

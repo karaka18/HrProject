@@ -83,6 +83,11 @@ public class LoginHistoryServiceImpl implements LoginHistoryService {
 	    }
 		
 	}
+
+	@Override
+	public LoginHistoryVO getLastLoginByEmpId(String empId) {
+		 return LHdao.findLatestByEmpId(empId);
+	}
 	
 	
 	

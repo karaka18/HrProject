@@ -13,6 +13,6 @@ public interface LoginHistoryDAO {
 
 	public boolean isAccountLocked(String empId);
 
-	
+	public LoginHistoryVO findLatestByEmpId(String empId);
     
 }

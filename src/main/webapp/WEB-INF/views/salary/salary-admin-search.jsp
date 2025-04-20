@@ -2,7 +2,7 @@
 
 <!-- 템플릿 include -->
 <jsp:include page="../common/header.jsp" />
-<jsp:include page="../common/sidebar.jsp">
+<jsp:include page="../common/admin-sidebar.jsp">
     <jsp:param name="menu" value="salary" />
 </jsp:include>
 
@@ -461,4 +461,4 @@ function confirmSalary() {
 }
 </script>
 
-<jsp:include page="../common/footer.jsp" />
+<jsp:include page="../common/footer2.jsp" />

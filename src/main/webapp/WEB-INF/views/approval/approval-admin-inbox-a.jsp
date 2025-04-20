@@ -4,7 +4,7 @@
 
 <!-- 템플릿 include -->
 <jsp:include page="../common/header.jsp" />
-<jsp:include page="../common/user-sidebar.jsp">
+<jsp:include page="../common/admin-sidebar.jsp">
     <jsp:param name="menu" value="approval" />
 </jsp:include>
 
@@ -215,6 +215,7 @@ html, body {
 	margin-top: 10px;
 	font-weight: bold;
 }
+
 .status {
   font-weight: bold;
 }

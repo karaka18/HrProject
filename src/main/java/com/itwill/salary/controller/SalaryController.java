@@ -1,7 +1,6 @@
 package com.itwill.salary.controller;
 
 import com.itwill.salary.dto.SalaryDetailDTO;
-import com.itwill.salary.dto.SalaryEmployeeDTO;
 import com.itwill.salary.service.SalaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,40 +20,44 @@ public class SalaryController {
 
     private final SalaryService salaryService;
 
-    // JSP 페이지 열기
+    // ✅ 사용자용 급여명세서 페이지
     @GetMapping("")
-    public String showSalaryPage() {
-        return "salary/salary-detail"; // /WEB-INF/views/salary/salary-detail.jsp
+    public String showUserSalaryPage() {
+        return "salary/salary-detail"; // user-sidebar.jsp 포함
     }
 
-    // 급여 명세서 조회 (SELECT ONLY)
+    // ✅ 관리자용(복사본) 급여명세서 페이지
+    @GetMapping("/a")
+    public String showAdminSalaryPage() {
+        return "salary/salary-detail-a"; // admin-sidebar.jsp 포함
+    }
+
+    // ✅ 공통: 급여 명세서 조회 (AJAX)
     @GetMapping("/view")
     @ResponseBody
-    public SalaryDetailDTO viewSalary(
-            @RequestParam("salMonth") String salMonth,
-            HttpSession session) {
+    public SalaryDetailDTO viewSalary(@RequestParam("salMonth") String salMonth,
+                                      HttpSession session) {
 
-    	String empId = (String) session.getAttribute("id");
+        String empId = (String) session.getAttribute("id");
         if (empId == null) {
             throw new RuntimeException("로그인 정보 없음");
         }
         return salaryService.getSalaryDetail(empId, salMonth);
     }
 
-    // 엑셀 다운로드
+    // ✅ 공통: 엑셀 다운로드
     @GetMapping("/download/excel")
     public void downloadSalaryExcel(@RequestParam("salMonth") String salMonth,
-                                     HttpServletResponse response,
-                                     HttpSession session) throws IOException {
+                                    HttpServletResponse response,
+                                    HttpSession session) throws IOException {
 
-    	String empId = (String) session.getAttribute("id");
+        String empId = (String) session.getAttribute("id");
         if (empId == null) {
             throw new RuntimeException("로그인 필요");
         }
 
         SalaryDetailDTO dto = salaryService.getSalaryDetail(empId, salMonth);
 
-        // 파일명 한글 인코딩
         String filename = URLEncoder.encode("급여명세서_" + salMonth + ".xlsx", StandardCharsets.UTF_8)
                 .replaceAll("\\+", "%20");
 
@@ -63,16 +66,18 @@ public class SalaryController {
 
         salaryService.writeSalaryExcel(dto, response.getOutputStream());
     }
+
+    // ✅ 공통: PDF 다운로드
     @GetMapping("/download/pdf")
     public void downloadSalaryPdf(@RequestParam("salMonth") String salMonth,
                                   HttpServletResponse response,
                                   HttpSession session) throws IOException {
 
-    	String empId = (String) session.getAttribute("id");
+        String empId = (String) session.getAttribute("id");
         if (empId == null) {
             throw new RuntimeException("로그인 필요");
         }
-            
+
         SalaryDetailDTO dto = salaryService.getSalaryDetail(empId, salMonth);
 
         String filename = URLEncoder.encode("급여명세서_" + salMonth + ".pdf", StandardCharsets.UTF_8)

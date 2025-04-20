@@ -160,10 +160,10 @@ public class MemberController {
 		
 		if (PasswordEncoderUtil.matches("1234", resultVO.getEmpPw())) {
 			session.setAttribute("loginUser", resultVO.getEmpId()); // 세션에 사용자 정보 저장
-			return "redirect:/member/userinfo"; // 특정 페이지로 이동
+			return "redirect:/admin/employee/edit/" + resultVO.getEmpId(); // 특정 페이지로 이동
 		} else {
 			rttr.addFlashAttribute("message", "정상 로그인 되었습니다.");
-			return "redirect:/member/main"; // 메인 페이지로 이동
+			return "redirect:/admin/main"; // 메인 페이지로 이동
 		}
 
 	}

@@ -52,6 +52,14 @@
 		DATE_SUB(NOW(), INTERVAL 1 HOUR)
 	</select>
 	
+	<!-- 로그인 마지막 시간 기록 조회 -->
+	<select id="findLatestByEmpId" parameterType="String" resultType="com.itwill.domain.LoginHistoryVO">
+	    SELECT * 
+	    FROM USER_LOGIN_HISTORY 
+	    WHERE emp_id = #{empId} 
+	    ORDER BY login_time DESC
+	    LIMIT 1
+	</select>
 	
 
 </mapper>

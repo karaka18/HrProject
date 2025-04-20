@@ -21,20 +21,46 @@ public class ApprovalController {
 
     private final ApprovalService approvalService;
 
+    // ==========================
+    // 1. 결재 신청 화면 (원본)
+    // ==========================
     @GetMapping("/apply")
     public String showApprovalForm() {
         return "approval/approval-apply";
     }
 
+    // ==========================
+    // 2. 복사된 결재 신청 화면 (/apply/a)
+    // ==========================
+    @GetMapping("/apply/a")
+    public String showApprovalFormAlt() {
+        return "approval/approval-apply-a"; // 복사한 JSP 이름
+    }
+
+    // ==========================
+    // 3. 결재 신청 처리 (POST 공통 로직)
+    // ==========================
     @PostMapping("/apply")
-    public String submitApprovalRequest(
-            HttpServletRequest request,
-            HttpSession session,
-            @RequestParam("attachmentFiles") List<MultipartFile> files) {
+    public String submitApprovalRequest(HttpServletRequest request, HttpSession session,
+                                        @RequestParam("attachmentFiles") List<MultipartFile> files) {
+        return handleApprovalRequest(request, session, files);
+    }
+
+    @PostMapping("/apply/a")
+    public String submitApprovalRequestAlt(HttpServletRequest request, HttpSession session,
+                                           @RequestParam("attachmentFiles") List<MultipartFile> files) {
+        return handleApprovalRequest(request, session, files);
+    }
+
+    // ==========================
+    // ✅ 공통 처리 로직 (중복 제거)
+    // ==========================
+    private String handleApprovalRequest(HttpServletRequest request, HttpSession session,
+                                         List<MultipartFile> files) {
 
         String empId = (String) session.getAttribute("id");
         if (empId == null) {
-            return "redirect:/member/login"; // 로그인 체크 추가
+            return "redirect:/member/login";
         }
 
         ApprovalApplyDTO dto = new ApprovalApplyDTO();
@@ -68,6 +94,7 @@ public class ApprovalController {
             leave.setLeaveEndDate(LocalDate.parse(request.getParameter("leaveEndDate")));
             int days = (int) (leave.getLeaveEndDate().toEpochDay() - leave.getLeaveStartDate().toEpochDay()) + 1;
             leave.setLeaveDays(days);
+
         } else if ("BUSINESS".equals(referenceTableName)) {
             typeCode = "04";
 
@@ -95,8 +122,12 @@ public class ApprovalController {
 
         approvalService.saveApprovalRequest(dto, files, leave, business);
 
-        return "redirect:/approval/apply";
+        return "redirect:/approval/apply";  // 또는 /approval/apply/a 로도 가능
     }
+
+    // ==========================
+    // 그 외 부가 기능 (기존 그대로 유지)
+    // ==========================
 
     @GetMapping("/search-approvers")
     @ResponseBody

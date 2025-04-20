@@ -21,4 +21,6 @@ public interface LoginHistoryService {
 
 	public void initSessionIfNotExists(String inputId, int failCount);
 	
+	public LoginHistoryVO getLastLoginByEmpId(String empId);
+	
 }

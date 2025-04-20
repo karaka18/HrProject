@@ -2,6 +2,8 @@ package com.itwill.attendance.service;
 
 import com.itwill.attendance.dto.AttendanceDTO;
 import com.itwill.attendance.dto.AttendanceDetailDTO;
+import com.itwill.attendance.dto.LeaveStatusDTO;
+import com.itwill.attendance.dto.WorkInputDTO;
 import com.itwill.attendance.mapper.AttendanceMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +41,8 @@ public class AttendanceServiceImpl implements AttendanceService {
     
     //사용자 지각 현황
     @Override
-    public List<LateAttendanceDTO> getLateAttendanceList(String empId) {
-        List<LateAttendanceDTO> allAttendances = attendanceMapper.selectLateAttendancesByEmpId(empId);
+    public List<LatenessDTO> getLateAttendanceList(String empId) {
+        List<LatenessDTO> allAttendances = attendanceMapper.selectLateAttendancesByEmpId(empId);
 
         return allAttendances.stream()
             .filter(dto -> dto.getCheckInTime() != null &&
@@ -126,58 +130,4 @@ public class AttendanceServiceImpl implements AttendanceService {
     public void updateWorkRecord(WorkInputDTO workInputDTO) {
         attendanceMapper.updateWorkRecord(workInputDTO);
     }
-    
-    
-    
-    
-    
-    
-    
-
-    // 1. 출근 기록
-    @Override
-    public void checkIn(String empId) {
-        AttendanceDTO dto = AttendanceDTO.builder()
-                .empId(empId)
-                .attendDate(LocalDate.now())
-                .checkInTime(LocalTime.now())
-                .build();
-
-        // 이미 기록이 있는지 확인하고 없으면 insert
-        AttendanceDTO existing = attendanceMapper.selectTodayAttendance(empId, LocalDate.now());
-        if (existing == null) {
-            attendanceMapper.insertCheckIn(dto);
-            log.info("출근 기록 완료: {}", dto);
-        } else {
-            log.warn("이미 출근 기록이 존재합니다: {}", existing);
-        }
-    }
-
-    // 2. 퇴근 기록
-    @Override
-    public void checkOut(String empId) {
-        LocalDate today = LocalDate.now();
-        LocalTime checkOutTime = LocalTime.now();
-
-        attendanceMapper.updateCheckOut(empId, today, checkOutTime);
-        log.info("퇴근 기록 완료 - empId: {}, 시간: {}", empId, checkOutTime);
-    }
-
-    // 3. 특정 날짜의 출근/퇴근 현황 조회
-    @Override
-    public AttendanceDetailDTO getDailyAttendance(String empId, LocalDate date) {
-        AttendanceDetailDTO detail = attendanceMapper.selectAttendanceDetail(empId, date);
-
-        // 기준 출근 시간: 오전 9시
-        LocalTime standardTime = LocalTime.of(9, 0, 0);
-        if (detail.getCheckInTime() != null) {
-            boolean isLate = detail.getCheckInTime().isAfter(standardTime);
-            detail.setIsLate(isLate ? "예" : "아니오");
-        } else {
-            detail.setIsLate("출근 기록 없음");
-        }
-
-        return detail;
-    }
-
 }

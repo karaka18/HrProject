@@ -4,40 +4,52 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.itwill.employee.persistence.EmployeeDAO">
-    
-    
-   <!-- 직원 전체 조회 -->
+
+    <!-- 전체 직원 조회 -->
     <select id="getAllEmployees" resultType="com.itwill.employee.domain.EmployeeVO">
         SELECT * FROM EMPLOYEE
     </select>
 
-    <!-- 직원 ID로 조회 -->
-    <select id="getEmployeeById" parameterType="String" resultType="com.itwill.employee.domain.EmployeeVO">
+    <!-- 사번으로 직원 조회 -->
+    <select id="getEmployeeById" parameterType="string" resultType="com.itwill.employee.domain.EmployeeVO">
         SELECT * FROM EMPLOYEE WHERE emp_id = #{empId}
     </select>
 
-    <!-- 직원 정보 수정 -->
-    <update id="updateEmployee" parameterType="com.itwill.employee.domain.EmployeeVO">
+    <!-- 사용자용 직원 정보 수정 -->
+    <update id="updateEmployeeUser" parameterType="com.itwill.employee.domain.EmployeeVO">
         UPDATE EMPLOYEE
-        SET dep_id = #{depId},
-            dep_name = #{depName},
-            pos_id = #{posId},
-            rank_id = #{rankId},
-            emp_cn = #{empCn},
-            emp_modifier = #{empModifier},
-            emp_modifydate = #{empModifydate}
+        SET emp_phone = #{empPhone},
+            emp_email = #{empEmail},
+            emp_address = #{empAddress},
+            emp_pht = #{empPht}
         WHERE emp_id = #{empId}
     </update>
 
+    <!-- 관리자용 직원 정보 수정 -->
+    <update id="updateEmployeeAdmin" parameterType="com.itwill.employee.domain.EmployeeVO">
+	    UPDATE EMPLOYEE
+	    SET
+	    	dep_id = #{depId},
+	        dep_name = #{depName},
+	        pos_id = #{posId},
+	        rank_id = #{rankId},
+	        role_id = #{roleId},
+	        emp_cn = #{empCn},
+	        emp_qd = #{empQd}
+	    WHERE emp_id = #{empId}
+	</update>
+
+
     <!-- 퇴사일 수정 -->
-    <update id="updateResignationDate">
-        UPDATE EMPLOYEE
-        SET emp_qd = #{empQd}
-        WHERE emp_id = #{empId}
-    </update>
-    
+   <update id="updateResignationDate" parameterType="map">
+	    UPDATE EMPLOYEE
+	    SET emp_qd = #{empQd}
+	    WHERE emp_id = #{empId}
+	</update>
+
+    <!-- 사원 삭제 -->
     <delete id="deleteEmployee" parameterType="string">
-	    DELETE FROM EMPLOYEE WHERE emp_id = #{empId}
-	</delete>
+        DELETE FROM EMPLOYEE WHERE emp_id = #{empId}
+    </delete>
 
 </mapper>

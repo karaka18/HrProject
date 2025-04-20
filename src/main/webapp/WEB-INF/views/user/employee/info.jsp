@@ -2,6 +2,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<%-- ✅ 퇴사 신청 완료 alert 메시지 --%>
+<c:if test="${not empty msg}">
+    <script>
+        alert("${msg}");
+    </script>
+</c:if>
+
+
 <jsp:include page="../../common/header.jsp" />
 <jsp:include page="../../common/user-sidebar.jsp">
     <jsp:param name="menu" value="personnel" />

@@ -1,8 +1,10 @@
 package com.itwill.employee.service;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.itwill.employee.domain.ResignationVO;
 import com.itwill.employee.persistence.ResignationDAO;
 
@@ -13,7 +15,7 @@ public class ResignationServiceImpl implements ResignationService {
     private ResignationDAO resignationDAO;
 
     @Override
-    public void requestResignation(ResignationVO vo) {
+    public void insertResignation(ResignationVO vo) {
         resignationDAO.insertResignation(vo);
     }
 
@@ -23,8 +25,18 @@ public class ResignationServiceImpl implements ResignationService {
     }
 
     @Override
-    public ResignationVO getResignationDetail(int resignId) {
+    public ResignationVO getResignationById(int resignId) {
         return resignationDAO.getResignationById(resignId);
+    }
+
+    @Override
+    public void approveResignation(int resignId, String approver) {
+        resignationDAO.approveResignation(resignId, approver);
+    }
+
+    @Override
+    public void rejectResignation(int resignId, String approver) {
+        resignationDAO.rejectResignation(resignId, approver);
     }
 
     @Override

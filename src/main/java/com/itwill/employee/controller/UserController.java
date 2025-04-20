@@ -1,5 +1,6 @@
 package com.itwill.employee.controller;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -21,10 +22,12 @@ import com.itwill.employee.domain.AppointmentVO;
 import com.itwill.employee.domain.DepartmentVO;
 import com.itwill.employee.domain.EmployeeVO;
 import com.itwill.employee.domain.NoticeVO;
+import com.itwill.employee.domain.ResignationVO;
 import com.itwill.employee.service.AppointmentService;
 import com.itwill.employee.service.DepartmentService;
 import com.itwill.employee.service.EmployeeService;
 import com.itwill.employee.service.NoticeService;
+import com.itwill.employee.service.ResignationService;
 
 @Controller
 @RequestMapping("/user")
@@ -42,11 +45,14 @@ public class UserController {
 	@Autowired
 	private DepartmentService departmentService;
 	
+	@Autowired
+	private ResignationService resignationService;
+	
 
 	@GetMapping("/main")
 	public String userMain(HttpSession session, Model model) {
 	    //String empId = (String) session.getAttribute("empId");
-	    String testEmpId = "10100002";
+	    String testEmpId = "240420001";
 	    //EmployeeVO employee = employeeService.getEmployeeById(empId);
 	    EmployeeVO employee = employeeService.getEmployeeById(testEmpId);
 	    
@@ -76,7 +82,7 @@ public class UserController {
     @GetMapping("/employee/info")
     public String employeeInfo(HttpSession session, Model model) {
         // String empId = (String) session.getAttribute("empId"); 로그인 하면 쓸거임
-        String testEmpId = "10100002";
+        String testEmpId = "240420001";
         // EmployeeVO employee = employeeService.getEmployeeById(empId); 로그인 하면 쓸거임
         EmployeeVO employee = employeeService.getEmployeeById(testEmpId);
         model.addAttribute("employee", employee);
@@ -87,18 +93,37 @@ public class UserController {
     @GetMapping("/employee/edit")
     public String editEmployeeForm(HttpSession session, Model model) {
         // String empId = (String) session.getAttribute("empId"); 로그인 하면 쓸거임
-        String testEmpId = "10100002";
+        String testEmpId = "240420001";
         // EmployeeVO employee = employeeService.getEmployeeById(empId); 로그인 하면 쓸거임
         EmployeeVO employee = employeeService.getEmployeeById(testEmpId);
         model.addAttribute("employee", employee);
         return "user/employee/edit";
     }
     
+    @PostMapping("/employee/update")
+    public String updateEmployee(EmployeeVO employee, HttpSession session, RedirectAttributes redirectAttributes) {
+        // 실제 로그인 적용 시 아래 코드 사용
+        // String empId = (String) session.getAttribute("empId");
+
+        // 테스트용 ID (개발 중에만 사용)
+        String empId = "240420001";
+
+        employee.setEmpId(empId);
+        employeeService.updateEmployeeUser(employee);
+        redirectAttributes.addFlashAttribute("msg", "정보가 수정되었습니다.");
+
+        return "redirect:/user/employee/info";
+    }
+
+
+    
+    
+    
     // 퇴사 신청 페이지
     @GetMapping("/employee/resignation")
     public String resignationForm(HttpSession session, Model model) {
         // String empId = (String) session.getAttribute("empId"); 로그인 하면 쓸거임
-        String testEmpId = "10100002";
+        String testEmpId = "240420001";
         // EmployeeVO employee = employeeService.getEmployeeById(empId); 로그인하면 쓸거임
         EmployeeVO employee = employeeService.getEmployeeById(testEmpId);
         model.addAttribute("employee", employee);
@@ -107,15 +132,42 @@ public class UserController {
     
     @PostMapping("/employee/resignation")
     public String processResignation(
-            @RequestParam("emp_qd") @DateTimeFormat(pattern = "yyyy-MM-dd") Date empQd,
-            HttpSession session, RedirectAttributes redirectAttributes) {
+            @RequestParam("resignationDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date empQd,
+            @RequestParam("resignationType") String resignationType,
+            @RequestParam("resignationReason") String resignationReason,
+            @RequestParam("handoverPlan") String handoverPlan,
+            @RequestParam("contactAfter") String contactAfter,
+            @RequestParam(value = "agreement", required = false) boolean agreement,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
 
         String empId = (String) session.getAttribute("empId");
-        employeeService.updateResignationDate(empId, empQd);
-        redirectAttributes.addFlashAttribute("msg", "퇴사 신청이 완료되었습니다.");
+        if (empId == null) empId = "240420001"; // 테스트용
+
+        ResignationVO resignation = new ResignationVO();
+        resignation.setEmpId(empId);
+        resignation.setResignationDate(new java.sql.Date(empQd.getTime()));
+        resignation.setResignationType(resignationType);
+        resignation.setResignationReason(resignationReason);
+        resignation.setHandoverPlan(handoverPlan);
+        resignation.setContactAfter(contactAfter);
+        resignation.setAgreement(agreement);
+        resignation.setStatus("대기");
+
+        try {
+            resignationService.insertResignation(resignation);
+            redirectAttributes.addFlashAttribute("msg", "퇴사 신청이 완료되었습니다.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("msg", "퇴사 신청 중 오류가 발생했습니다.");
+            e.printStackTrace();
+        }
 
         return "redirect:/user/employee/info";
     }
+
+
+
+
     
     
     
@@ -123,7 +175,7 @@ public class UserController {
     @GetMapping("/employee/appointment")
     public String appointmentInfo(HttpSession session, Model model) {
         // String empId = (String) session.getAttribute("empId");
-        String testEmpId = "10100002";
+        String testEmpId = "240420001";
         // List<AppointmentVO> appointments = appointmentService.getAppointmentsByEmpId(empId);
         List<AppointmentVO> appointments = appointmentService.getAppointmentsByEmpId(testEmpId);
         model.addAttribute("appointments", appointments);

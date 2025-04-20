@@ -1,9 +1,6 @@
 package com.itwill.employee.persistence;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -35,26 +32,29 @@ public class ResignationDAOImpl implements ResignationDAO {
 
     @Override
     public void approveResignation(int resignId, String approver) {
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("resignId", resignId);
-        paramMap.put("approver", approver);
-        sqlSession.update(NAMESPACE + ".approveResignation", paramMap);
+        sqlSession.update(NAMESPACE + ".approveResignation", 
+            new java.util.HashMap<String, Object>() {{
+                put("resignId", resignId);
+                put("approver", approver);
+            }});
     }
 
     @Override
     public void rejectResignation(int resignId, String approver) {
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("resignId", resignId);
-        paramMap.put("approver", approver);
-        sqlSession.update(NAMESPACE + ".rejectResignation", paramMap);
+        sqlSession.update(NAMESPACE + ".rejectResignation", 
+            new java.util.HashMap<String, Object>() {{
+                put("resignId", resignId);
+                put("approver", approver);
+            }});
     }
 
     @Override
     public void updateStatus(int resignId, String status, String approver) {
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("resignId", resignId);
-        paramMap.put("status", status);
-        paramMap.put("approver", approver);
-        sqlSession.update(NAMESPACE + ".updateStatus", paramMap);
+        sqlSession.update(NAMESPACE + ".updateStatus", 
+            new java.util.HashMap<String, Object>() {{
+                put("resignId", resignId);
+                put("status", status);
+                put("approver", approver);
+            }});
     }
 }

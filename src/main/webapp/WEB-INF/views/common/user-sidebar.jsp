@@ -1,6 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<% 
+	Integer roleId = (Integer) session.getAttribute("role_id");
+	request.setAttribute("roleId", roleId);
+%>
+
 <div class="sidebar">
     <ul class="menu-list">
         <li class="menu-item ${param.menu == 'personnel' ? 'active' : ''} has-submenu">
@@ -52,7 +57,7 @@
     </ul>
     
     <!-- 관리자 전환 버튼 (관리자 권한이 있는 사용자에게만 표시) -->
-    <c:if test="${sessionScope.user.isAdmin == true}">
+    <c:if test="${sessionScope.role_id == 1 || sessionScope.role_id == 2}">
         <div class="admin-switch">
             <a href="<c:url value='/admin/main' />" class="admin-switch-btn">
                 <i class="fas fa-user-shield"></i> 관리자 모드로 전환

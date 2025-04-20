@@ -155,15 +155,20 @@ public class MemberController {
 		
 		// 로그인 성공 시 세션에 role_id 저장
 		session.setAttribute("role_id", resultVO.getRoleId());
+		
+		// role_id가 없을 경우 기본값 설정 (예: 직원)
+	    if (session.getAttribute("role_id") == null) {
+	    	session.setAttribute("role_id", 4); // 기본적으로 직원 역할로 설정
+	    }
 
 //		if ("1234".equals(resultVO.getEmpPw())) {
 		
 		if (PasswordEncoderUtil.matches("1234", resultVO.getEmpPw())) {
 			session.setAttribute("loginUser", resultVO.getEmpId()); // 세션에 사용자 정보 저장
-			return "redirect:/admin/employee/edit/" + resultVO.getEmpId(); // 특정 페이지로 이동
+			return "redirect:/user/employee/edit"; // 특정 페이지로 이동
 		} else {
 			rttr.addFlashAttribute("message", "정상 로그인 되었습니다.");
-			return "redirect:/admin/main"; // 메인 페이지로 이동
+			return "redirect:/user/main"; // 메인 페이지로 이동
 		}
 
 	}
@@ -190,42 +195,42 @@ public class MemberController {
 		return "/member/login"; // "/login"
 	}
 
-	@RequestMapping(value = "/main", method = RequestMethod.GET)
-	public String MemberMainGET(HttpSession session, Model model) {
-		logger.info(" /member/main -> MemberMainGET()호출");
-		
-		// 세션에서 role_id 값을 가져옴
-	    Object roleId = session.getAttribute("role_id");
-		
-	    // role_id가 없을 경우 기본값 설정 (예: 직원)
-	    if (roleId == null) {
-	        roleId = 4; // 기본적으로 직원 역할로 설정
-	    }
-
-	    // role_id 값을 모델에 추가하여 JSP에서 사용
-	    model.addAttribute("role_id", roleId);
-
-	    logger.info(" /member/main.jsp 페이지로 이동");
-	    return "/member/main";
-	}
-
-	@PostMapping(value = "/main")
-	public String memberMainPOST(MemberVO vo) {
-		return "/member/main";
-	}
-
-	@RequestMapping(value = "/userinfo", method = RequestMethod.GET)
-	public String MemberUserinfoGET() {
-		logger.info(" /member/main -> MemberUserinfoGET()호출");
-
-		logger.info(" /member/userinfo.jsp 페이지로 이동");
-		return "/member/userinfo";
-	}
-
-	@PostMapping(value = "/userinfo")
-	public String memberUserinfoPOST(MemberVO vo) {
-		return "/member/userinfo";
-	}
+//	@RequestMapping(value = "/main", method = RequestMethod.GET)
+//	public String MemberMainGET(HttpSession session, Model model) {
+//		logger.info(" /user/main -> MemberMainGET()호출");
+//		
+//		// 세션에서 role_id 값을 가져옴
+//	    Object roleId = session.getAttribute("role_id");
+//		
+//	    // role_id가 없을 경우 기본값 설정 (예: 직원)
+//	    if (roleId == null) {
+//	        roleId = 4; // 기본적으로 직원 역할로 설정
+//	    }
+//
+//	    // role_id 값을 모델에 추가하여 JSP에서 사용
+//	    model.addAttribute("role_id", roleId);
+//
+//	    logger.info(" /user/main.jsp 페이지로 이동");
+//	    return "/user/main";
+//	}
+//
+//	@PostMapping(value = "/main")
+//	public String memberMainPOST(MemberVO vo) {
+//		return "/user/main";
+//	}
+//
+//	@RequestMapping(value = "/userinfo", method = RequestMethod.GET)
+//	public String MemberUserinfoGET() {
+//		logger.info(" /user/main -> MemberUserinfoGET()호출");
+//
+//		logger.info(" /user/employee/edit.jsp 페이지로 이동");
+//		return "/user/employee/edit";
+//	}
+//
+//	@PostMapping(value = "/userinfo")
+//	public String memberUserinfoPOST(MemberVO vo) {
+//		return "/user/employee/edit";
+//	}
 	
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {

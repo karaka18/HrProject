@@ -46,7 +46,11 @@
     <h2>내 정보 수정</h2>
 
     <form action="${pageContext.request.contextPath}/user/employee/update" method="post" class="employee-form">
+        <!-- ✅ Hidden 필드들 -->
         <input type="hidden" name="empId" value="${employee.empId}" />
+        <input type="hidden" name="depId" value="${employee.depId}" />
+        <input type="hidden" name="depName" value="${employee.depName}" />
+        <input type="hidden" name="empModifier" value="${sessionScope.user.empId}" />
 
         <div class="form-grid">
             <!-- ❌ 수정 불가 -->
@@ -58,9 +62,6 @@
 
             <label>부서:</label>
             <input type="text" value="${employee.depName}" readonly />
-
-            <label>직급:</label>
-            <input type="text" value="${employee.rankId}" readonly />
 
             <label>입사일자:</label>
             <input type="text" value="${empJdFormatted}" readonly />

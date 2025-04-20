@@ -14,10 +14,13 @@ public interface EmployeeService {
 	EmployeeVO getEmployeeById(String empId);
     
     //Ư������ ���� ����
-	void updateEmployee(EmployeeVO employee);
+	void updateEmployeeUser(EmployeeVO employee);
+    void updateEmployeeAdmin(EmployeeVO employee);
 	
-	void updateResignationDate(String empId, Date empQd);
+	int updateResignationDate(String empId, Date empQd);
 	
 	void deleteEmployee(String empId);
+	
+	
     
 }

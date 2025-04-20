@@ -27,14 +27,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void updateEmployee(EmployeeVO employee) {
-    	employee.setEmpModifydate(new Timestamp(System.currentTimeMillis()));
-        employeeDAO.updateEmployee(employee);
+    public void updateEmployeeUser(EmployeeVO employee) {
+        employeeDAO.updateEmployeeUser(employee);
+    }
+
+    @Override
+    public void updateEmployeeAdmin(EmployeeVO employee) {
+        employeeDAO.updateEmployeeAdmin(employee);
     }
     
     @Override
-    public void updateResignationDate(String empId, Date empQd) {
-        employeeDAO.updateResignationDate(empId, empQd);
+    public int updateResignationDate(String empId, Date empQd) {
+        return employeeDAO.updateResignationDate(empId, empQd);
     }
     
     @Override

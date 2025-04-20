@@ -6,6 +6,7 @@
     <jsp:param name="menu" value="personnel" />
 </jsp:include>
 
+<body>
 <div class="content container">
     <h2 class="mb-4">부서 관리</h2>
 
@@ -28,7 +29,7 @@
                     <tr data-id="${dept.depId}">
                         <td>${dept.depId}</td>
                         <td>
-                            <input type="text" class="form-control dep-name" data-id="${dept.depId}" value="${dept.depName}" readonly />
+                            <input type="text" class="form-control dep-name" value="${dept.depName}" readonly />
                         </td>
                         <td>${dept.depRegister}</td>
                         <td>${dept.depRegistdate}</td>
@@ -61,7 +62,7 @@
 
 <script>
 document.getElementById('addDeptBtn').addEventListener('click', function () {
-    const name = document.getElementById('newDeptName').value;
+    const name = document.getElementById('newDeptName').value.trim();
     if (!name) return alert('부서명을 입력하세요.');
 
     fetch('/admin/organization/department/add', {
@@ -100,12 +101,14 @@ document.querySelectorAll('.save-btn').forEach(btn => {
         const tr = this.closest('tr');
         const id = tr.dataset.id;
         const input = tr.querySelector('.dep-name');
-        const name = input.value;
+        const name = input.value.trim();
+
+        if (!name) return alert('부서명을 입력하세요.');
 
         fetch('/admin/organization/department/update', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `depId=${id}&depName=${encodeURIComponent(name)}`
+            body: 'depId=' + encodeURIComponent(id) + '&depName=' + encodeURIComponent(name)
         }).then(res => res.json())
           .then(success => {
             if (success) {

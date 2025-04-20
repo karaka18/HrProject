@@ -6,14 +6,16 @@
 <mapper namespace="com.itwill.employee.persistence.ResignationDAO">
 
     <insert id="insertResignation" parameterType="com.itwill.employee.domain.ResignationVO">
-        INSERT INTO resignation (
-            emp_id, resignation_date, resignation_type,
-            resignation_reason, handover_plan, contact_after, agreement
-        ) VALUES (
-            #{empId}, #{resignationDate}, #{resignationType},
-            #{resignationReason}, #{handoverPlan}, #{contactAfter}, #{agreement}
-        )
-    </insert>
+	    INSERT INTO resignation (
+	        emp_id, resignation_date, resignation_type,
+	        resignation_reason, handover_plan, contact_after,
+	        agreement, status, request_date
+	    ) VALUES (
+	        #{empId}, #{resignationDate}, #{resignationType},
+	        #{resignationReason}, #{handoverPlan}, #{contactAfter},
+	        #{agreement}, '대기', NOW()
+	    )
+	</insert>
 
     <select id="getAllResignations" resultType="com.itwill.employee.domain.ResignationVO">
         SELECT * FROM resignation ORDER BY request_date DESC

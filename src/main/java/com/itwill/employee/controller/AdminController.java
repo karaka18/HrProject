@@ -1,6 +1,8 @@
 package com.itwill.employee.controller;
 
+import java.sql.Date;
 import java.sql.Timestamp;
+
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.itwill.employee.domain.AppointmentVO;
 import com.itwill.employee.domain.DepartmentVO;
@@ -85,12 +88,31 @@ public class AdminController {
     }
     
     @PostMapping("/employee/edit")
-    public String employeeEditSubmit(@ModelAttribute EmployeeVO employee) {
-        employee.setEmpModifier("admin");
-        employee.setEmpModifydate(new Timestamp(System.currentTimeMillis())); 
-        employeeService.updateEmployee(employee);
+    public String employeeEditSubmit(
+        @ModelAttribute EmployeeVO employee,
+        @RequestParam(value = "empQd", required = false) String empQdStr,
+        RedirectAttributes redirectAttributes
+    ) {
+        try {
+            if (empQdStr != null && !empQdStr.trim().isEmpty()) {
+                employee.setEmpQd(Date.valueOf(empQdStr));
+            } else {
+                employee.setEmpQd(null);
+            }
+
+            employeeService.updateEmployeeAdmin(employee);
+            redirectAttributes.addFlashAttribute("success", "직원 정보가 성공적으로 수정되었습니다.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "직원 정보 수정 중 오류가 발생했습니다.");
+        }
         return "redirect:/admin/employee/list";
     }
+
+
+
+
+
     
     // 인사관리 - 삭제
     @PostMapping("/employee/delete")
@@ -280,7 +302,7 @@ public class AdminController {
     // 관리자 퇴사 신청 상세
     @GetMapping("/resignation/detail/{resignId}")
     public String resignationDetail(@PathVariable("resignId") int resignId, Model model) {
-    	ResignationVO vo = resignationService.getResignationDetail(resignId);
+    	ResignationVO vo = resignationService.getResignationById(resignId);
         EmployeeVO employee = employeeService.getEmployeeById(vo.getEmpId());
         model.addAttribute("resign", vo);
         model.addAttribute("employee", employee);

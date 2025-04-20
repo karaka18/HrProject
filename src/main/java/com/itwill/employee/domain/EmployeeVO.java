@@ -27,6 +27,8 @@ public class EmployeeVO {
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date empQd;
+	
+	
 
 	private String depId;
 	private String depName;
@@ -38,10 +40,11 @@ public class EmployeeVO {
 	private String empRegister;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Timestamp empModifydate;
+	private transient Timestamp empModifydate;
 
 	private String empModifier;
 	private String empPht;
 	private String empCn;
 	private String appId;
+	private Integer roleId;
 }

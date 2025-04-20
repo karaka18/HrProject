@@ -40,16 +40,21 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     }
 
     @Override
-    public void updateEmployee(EmployeeVO employee) {
-        sqlSession.update(NAMESPACE + ".updateEmployee", employee);
+    public void updateEmployeeUser(EmployeeVO employee) {
+        sqlSession.update(NAMESPACE + ".updateEmployeeUser", employee);
+    }
+
+    @Override
+    public void updateEmployeeAdmin(EmployeeVO employee) {
+        sqlSession.update(NAMESPACE + ".updateEmployeeAdmin", employee);
     }
     
     @Override
-    public void updateResignationDate(String empId, Date empQd) {
+    public int updateResignationDate(String empId, Date empQd) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("empId", empId);
         paramMap.put("empQd", empQd);
-        sqlSession.update(NAMESPACE + ".updateResignationDate", paramMap);
+        return sqlSession.update(NAMESPACE + ".updateResignationDate", paramMap);
     }
     
     @Override

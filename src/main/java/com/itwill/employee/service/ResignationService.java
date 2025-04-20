@@ -4,8 +4,10 @@ import java.util.List;
 import com.itwill.employee.domain.ResignationVO;
 
 public interface ResignationService {
-    void requestResignation(ResignationVO vo);
+    void insertResignation(ResignationVO vo);
     List<ResignationVO> getAllResignations();
-    ResignationVO getResignationDetail(int resignId);
+    ResignationVO getResignationById(int resignId);
+    void approveResignation(int resignId, String approver);
+    void rejectResignation(int resignId, String approver);
     void updateStatus(int resignId, String status, String approver);
 }

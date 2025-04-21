@@ -25,7 +25,6 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
     private final LeaveService leaveService;
 
-    // 사용자 출퇴근 기록 상세
     @GetMapping("/attendance/detail")
     public String getDailyAttendance(@RequestParam String empId,
                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
@@ -35,23 +34,21 @@ public class AttendanceController {
         return "attendance/attendanceDetail";
     }
 
-    // 사용자 지각 현황
     @GetMapping("/attendance/late")
     public String getLateAttendances(@RequestParam String empId,
                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
                                      Model model) {
-        List<LateAttendanceDTO> latenessList = attendanceService.getLateAttendanceList(empId, start, end);
+        List<LatenessAdminDTO> latenessList = attendanceService.getLateAttendanceList(empId, start, end);
         model.addAttribute("lateAttendances", latenessList);
         return "attendance/lateAttendanceList";
     }
 
-    // 사용자 근무 조회
     @GetMapping("/attendance/work-records")
     public String getWorkRecords(@RequestParam String empId,
-                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
-                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
-                                 Model model) {
+                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
+                                  Model model) {
         List<WorkRecordDTO> workList = attendanceService.getWorkRecords(empId, start, end);
 
         long totalMinutes = workList.stream().mapToLong(WorkRecordDTO::getWorkMinutes).sum();
@@ -64,7 +61,6 @@ public class AttendanceController {
         return "attendance/workRecordsList";
     }
 
-    // 사용자 근태 항목
     @GetMapping("/attendance/status")
     public String getAttendanceStatus(@RequestParam String empId,
                                       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
@@ -75,7 +71,6 @@ public class AttendanceController {
         return "attendance/statusList";
     }
 
-    // 사용자 휴가 내역 및 신청
     @GetMapping("/attendance/leave")
     public String getLeaveHistory(@RequestParam String empId,
                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
@@ -87,64 +82,7 @@ public class AttendanceController {
         model.addAttribute("remainingLeave", remainingLeave);
         return "attendance/leaveHistory";
     }
-
-    // 관리자 출퇴근 기록부 조회
-    @GetMapping("/admin/attendance")
-    public String getAllAttendanceDetails(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-                                          Model model) {
-        List<AttendanceDetailDTO> attendanceDetails = attendanceService.getAttendanceDetails(startDate, endDate);
-        model.addAttribute("attendanceDetails", attendanceDetails);
-        return "admin/attendanceDetails";
-    }
-
-    @GetMapping("/admin/attendance/{empId}")
-    public String getAttendanceDetail(@PathVariable String empId,
-                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-                                      Model model) {
-        AttendanceDetailDTO attendanceDetail = attendanceService.getAttendanceDetailByEmpIdAndDate(empId, date);
-        model.addAttribute("attendanceDetail", attendanceDetail);
-        return "admin/attendanceDetail";
-    }
-
-    // 관리자 휴가 일수 조회
-    @GetMapping("/admin/leave/status/{empId}")
-    public String getLeaveStatus(@PathVariable String empId, Model model) {
-        LeaveStatusDTO leaveStatus = leaveService.getLeaveStatusByEmpId(empId);
-        model.addAttribute("leaveStatus", leaveStatus);
-        return "admin/leaveStatus";
-    }
-
-    @GetMapping("/admin/leave/status")
-    public String getAllLeaveStatuses(Model model) {
-        List<LeaveStatusDTO> leaveStatuses = leaveService.getAllLeaveStatuses();
-        model.addAttribute("leaveStatuses", leaveStatuses);
-        return "admin/leaveStatuses";
-    }
-
-    // 관리자 지각 현황
-    @GetMapping("/lateness/admin")
-    public String adminLateness(@RequestParam("startDate") String startDate,
-                                @RequestParam("endDate") String endDate, Model model) {
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
-        List<LatenessAdminDTO> latenessList = attendanceService.getLatenessByPeriodForAdmin(start, end);
-        model.addAttribute("latenessList", latenessList);
-        return "lateness/admin";
-    }
-
-    // 관리자 근무 형태 현황
-    @GetMapping("/worktype/admin")
-    public String adminWorkType(@RequestParam("startDate") String startDate,
-                                 @RequestParam("endDate") String endDate, Model model) {
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
-        List<WorkTypeAdminDTO> workTypeList = attendanceService.getWorkTypeByPeriodForAdmin(start, end);
-        model.addAttribute("workTypeList", workTypeList);
-        return "worktype/admin";
-    }
-
-    // 관리자 근무 입력
+    
     @PostMapping("/workinput/admin")
     public String adminWorkInput(@RequestParam("empId") String empId,
                                  @RequestParam("checkInTime") String checkInTime,
@@ -152,6 +90,7 @@ public class AttendanceController {
                                  @RequestParam("workType") String workType,
                                  @RequestParam("absenceReason") String absenceReason,
                                  Model model) {
+        // WorkInputDTO 객체 생성
         WorkInputDTO workInputDTO = WorkInputDTO.builder()
                 .empId(empId)
                 .checkInTime(LocalDateTime.parse(checkInTime))
@@ -159,12 +98,16 @@ public class AttendanceController {
                 .workType(workType)
                 .absenceReason(absenceReason)
                 .build();
+
+        // AttendanceService에 데이터를 전달하여 작업 수행
+        boolean isInserted = attendanceService.insert(workInputDTO); // insert 메서드 호출
         
-        //관리자 근무 입력 조회
-        attendanceService.insertWorkRecord(workInputDTO);
+        if (isInserted) {
+            model.addAttribute("message", "근무 정보가 성공적으로 입력되었습니다.");
+        } else {
+            model.addAttribute("message", "근무 정보 입력에 실패했습니다.");
+        }
 
-        model.addAttribute("message", "근무 기록이 성공적으로 입력되었습니다.");
-        return "redirect:/admin/workinput";
+        return "attendance/workInputResult"; // 결과 페이지로 이동
     }
-
 }

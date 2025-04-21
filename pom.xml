@@ -45,13 +45,6 @@
 			<version>${org.aspectj-version}</version>
 		</dependency>
 
-	<dependency>
-    <groupId>org.projectlombok</groupId>
-    <artifactId>lombok</artifactId>
-    <version>1.18.28</version> <!-- 또는 최신 버전 -->
-    <scope>provided</scope>
-</dependency>
-
 		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>

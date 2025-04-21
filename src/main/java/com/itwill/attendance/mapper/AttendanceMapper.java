@@ -53,11 +53,21 @@ List<LeaveStatusDTO> selectAllLeaveStatuses();
 //지각 현황 조회 (관리자용)
 List<LatenessAdminDTO> selectLateDetailsForAdmin(@Param("startDate") String startDate,
                                             @Param("endDate") String endDate,
-                                            @Param("departmentId") String departmentId);
+                                            @Param("departmentId") String departmentId,
+											@Param("empId") String empId);
 
 
 //근무 형태 통계 조회 (관리자용) - 부서별, 날짜별 카운트
 List<WorkSummaryDTO> selectWorkSummaryForAdmin(@Param("startDate") String startDate,
                                              @Param("endDate") String endDate,
                                              @Param("departmentId") String departmentId);
+
+
+List<LatenessAdminDTO> selectLatenessByPeriodForAdmin(LocalDate startDate, LocalDate endDate);
+
+List<WorkTypeAdminDTO> selectWorkTypeByPeriodForAdmin(LocalDate startDate, LocalDate endDate);
+
+void insertWorkRecord(WorkInputDTO dto);
+void updateWorkRecord(WorkInputDTO dto);
+
 }

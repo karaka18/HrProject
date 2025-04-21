@@ -23,7 +23,7 @@ public interface AttendanceService{
 
 	
 	//사용자 근무 조회
-	List<WorkRecordDTO> getWorkRecords(String empId, LocalDate startDate, LocalDate endDate);
+	List<AttendanceDetailDTO> getWorkRecords(String empId, LocalDate startDate, LocalDate endDate);
 
 	//사용자 근태 항목
 	List<AttendanceStatusDTO> getAttendanceStatus(String empId, LocalDate startDate, LocalDate endDate);
@@ -42,13 +42,10 @@ public interface AttendanceService{
 
 	
 	//관리자 지각 현황 조회
-	List<LatenessAdminDTO> getLatenessByPeriodForAdmin(LocalDate startDate, LocalDate endDate);  
+	List<LatenessAdminDTO> getLateAttendanceList(String empId);
 	
 	//관리자 근무 형태 현황 조회
 	List<WorkTypeAdminDTO> getWorkTypeByPeriodForAdmin(LocalDate startDate, LocalDate endDate);  
-	
-	//지각 분 조회
-	List<LatenessAdminDTO> getLateAttendanceList(String empId);
 
 	
 	 // 관리자 근무 입력
@@ -56,4 +53,14 @@ public interface AttendanceService{
 
     // 관리자 근무 기록 수정 (출퇴근 시간 수정 등)
     void updateWorkRecord(WorkInputDTO workInputDTO);
+    
+    public boolean insert(WorkInputDTO workInputDTO) ;
+    
+    //    public boolean insert(WorkInputDTO workInputDTO) {
+//    	// MyBatis 등을 통해 DB에 데이터를 삽입하는 로직 작성
+//    	return attendanceMapper.insertWorkInput(workInputDTO) > 0;
+//    }
+
+    
+    
 }

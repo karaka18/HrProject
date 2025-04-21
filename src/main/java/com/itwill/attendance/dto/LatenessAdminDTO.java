@@ -1,6 +1,7 @@
 package com.itwill.attendance.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import lombok.Builder;
@@ -18,4 +19,8 @@ public class LatenessAdminDTO {
     private String lateReason; // 지각 사유 (DB에 저장되지 않지만, 조회 시 필요)
     private LocalTime lateDuration; // 지각 시간 (지각이 발생한 시간)
     private String status;     // 관리자 확인 상태 (확인, 미확인)
+    
+    private LocalDateTime checkInTime;
+    private String isLate;
+
 }

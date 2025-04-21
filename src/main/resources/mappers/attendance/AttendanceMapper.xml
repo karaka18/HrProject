@@ -277,5 +277,77 @@
         WHERE emp_id = #{empId}
           AND DATE(work_date) = #{date}
     </select>
+    
+    <select id="selectLatenessByPeriodForAdmin" resultType="com.itwill.attendance.dto.LatenessAdminDTO">
+    SELECT 
+        e.emp_id,
+        e.emp_name,
+        d.dep_name,
+        a.attendance_date,
+        a.arrival_time,
+        a.status,
+        TIMESTAMPDIFF(MINUTE, '09:00:00', a.arrival_time) AS late_minutes
+    FROM 
+        ATTENDANCE a
+    JOIN 
+        EMPLOYEE e ON a.emp_id = e.emp_id
+    JOIN 
+        DEPARTMENT d ON e.dep_id = d.dep_id
+    WHERE 
+        a.attendance_date BETWEEN #{startDate} AND #{endDate}
+        AND a.status = '지각'
+    ORDER BY 
+        a.attendance_date, e.emp_id
+</select>
+    
+    <!-- AttendanceMapper.xml -->
+<select id="selectWorkTypeByPeriodForAdmin" resultType="com.itwill.attendance.dto.WorkTypeAdminDTO">
+    SELECT 
+        e.emp_id,
+        e.emp_name,
+        d.dep_name,
+        a.attendance_date,
+        a.status
+    FROM 
+        ATTENDANCE a
+    JOIN 
+        EMPLOYEE e ON a.emp_id = e.emp_id
+    JOIN 
+        DEPARTMENT d ON e.dep_id = d.dep_id
+    WHERE 
+        a.attendance_date BETWEEN #{startDate} AND #{endDate}
+    ORDER BY 
+        a.attendance_date, e.emp_id
+</select>
+    
+    
+    <!-- insertWorkRecord -->
+<insert id="insertWorkRecord" parameterType="com.itwill.attendance.dto.WorkInputDTO">
+    INSERT INTO ATTENDANCE (
+        emp_id, attendance_date, check_in_time, check_out_time, status
+    )
+    VALUES (
+        #{empId}, #{attendanceDate}, #{checkInTime}, #{checkOutTime}, #{status}
+    )
+</insert>
+
+<!-- updateWorkRecord -->
+<update id="updateWorkRecord" parameterType="com.itwill.attendance.dto.WorkInputDTO">
+    UPDATE ATTENDANCE
+    SET 
+        check_in_time = #{checkInTime},
+        check_out_time = #{checkOutTime},
+        status = #{status}
+    WHERE 
+        emp_id = #{empId}
+        AND attendance_date = #{attendanceDate}
+</update>
+
+<insert id="insertWorkInput" parameterType="com.itwill.attendance.dto.WorkInputDTO">
+    INSERT INTO attendance (emp_id, check_in_time, check_out_time, work_type, absence_reason)
+    VALUES (#{empId}, #{checkInTime}, #{checkOutTime}, #{workType}, #{absenceReason})
+</insert>
+
+    
 
 </mapper>

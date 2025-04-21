@@ -25,6 +25,8 @@ public class AttendanceDetailDTO {
     private String departmentName;     // 부서명 (JOIN: department) ⚠️ DB에 없음
     private String isLate;             // 지각 여부 (앱에서 계산) ⚠️ DB에 없음
 
+    private long workMinutes;
+
     
     public long getWorkMinutes() {
         if (checkInTime != null && checkOutTime != null) {

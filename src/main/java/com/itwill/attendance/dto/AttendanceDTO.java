@@ -1,6 +1,9 @@
 package com.itwill.attendance.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import java.time.Duration; 
 
 import lombok.Builder;
 import lombok.Data;
@@ -9,64 +12,52 @@ import lombok.Data;
 @Builder
 public class AttendanceDTO {
 
-    // 고유 출퇴근 기록 ID (예: 250302250010001att)
-    private String attendanceId;
+	private String attendanceId;        // 근태 ID
+    private String empId;               // 사원 ID
+    private LocalDate workDate;         // 근무 일자
+    private LocalDateTime checkInTime;  // 출근 시간
+    private LocalDateTime checkOutTime; // 퇴근 시간
 
-    private String status; // 출근/퇴근 상태 (DB에 없는데..?)
-    
-    // 사원 번호
-    private String empId;
+    private int workDays;               // 근무 일수
+    private double workHours;           // 총 근무 시간
+    private double nightWorkHour;       // 야간 근무 시간
+    private long workMinutes;           // 총 근무 시간 (분 단위)
 
-    // 근무 일자 (yyyy-MM-dd)
-    private String workDate;
+    private String empName;             // 사원명
+    private String departmentName;      // 부서명
+    private String isLate;              // 지각 여부 (Y/N)
 
-    // 출근 시간
-    private LocalDateTime clockIn;
+    private String lateReason;          // 지각 사유
+    private String absenceReason;       // 결근 사유
 
-    // 퇴근 시간
-    private LocalDateTime clockOut;
 
-    // 지각 여부 (Y/N)
-    private String isLate;
+    // 서버 내부에서 AttendanceDetailDTO로 변환할 때 사용
+    public AttendanceDetailDTO toAttendanceDetailDTO() {
+        return AttendanceDetailDTO.builder()
+            .attendanceId(this.attendanceId)
+            .empId(this.empId)
+            .date(java.sql.Date.valueOf(this.workDate))
+            .workDate(java.sql.Timestamp.valueOf(this.checkInTime))
+            .checkInTime(java.sql.Time.valueOf(this.checkInTime.toLocalTime()))
+            .checkOutTime(java.sql.Time.valueOf(this.checkOutTime.toLocalTime()))
+            .workDays(this.workDays)
+            .workHours(this.workHours)
+            .nightWorkHour(this.nightWorkHour)
+            .workMinutes(this.getWorkMinutes())
+            .empName(this.empName)
+            .departmentName(this.departmentName)
+            .lateReason(this.lateReason)
+            .absenceReason(this.absenceReason)
+            .createdAt(java.sql.Timestamp.valueOf(this.checkInTime))
+            .updatedAt(java.sql.Timestamp.valueOf(this.checkOutTime))
+            .build();
+    }
 
-    // 결근 여부 (Y/N)
-    private String isAbsent;
-
-    // 외근 여부 (Y/N)
-    private String isBusinessTrip;
-
-    // 조퇴 여부 (Y/N)
-    private String isEarlyLeave;
-
-    // 지각 사유 (입력 optional)
-    private String latenessReason;
-
-    // 지각 사유 처리 상태 (WAITING, APPROVED, REJECTED 등)
-    private String reasonStatus;
-
-    // 총 근무 시간 (분 단위로 계산, DB에서 계산해서 넣을 수도 있음)
-    private Integer totalWorkMinutes;
-
-    // 휴가 여부 (Y/N)
-    private String isLeave;
-
-    // 휴가 타입 (연차, 병가, 특별휴가 등)
-    private String leaveType;
-
-    // 휴가 승인 상태 (WAITING, APPROVED, REJECTED 등)
-    private String leaveStatus;
-
-    // 근무 형태 (예: 정상근무, 재택근무, 외근 등)
-    private String workForm;
-
-    // 기록 생성 시간
-    private LocalDateTime createdTime;
-
-    // 기록 수정 시간
-    private LocalDateTime updatedTime;
-    
-    private LocalDateTime arrivalTime;
-    private LocalDateTime leavetime;
-    private String remark;
-    
+    // 분 단위 근무 시간 자동 계산
+    public long getWorkMinutes() {
+        if (checkInTime != null && checkOutTime != null) {
+            return Duration.between(checkInTime, checkOutTime).toMinutes(); // Duration.between() 사용
+        }
+        return 0;
+    }
 }

@@ -8,15 +8,15 @@ import lombok.Data;
 
 @Data
 @Builder
-public class AttendanceStatusDTO {
-    private String empId;
+public class AttendanceSummaryDTO {
+	//사용자 근무 조회 DTO
+
+    private String empId;       // 사원 ID (DB)
     private String empName;
     private LocalDate workDate;
-    private String status;          // 근무 상태: 출근, 결근, 지각 등
     private LocalTime checkInTime;
     private LocalTime checkOutTime;
-    private Boolean isLate;
-    private Boolean isEarlyLeave;
-    private Double workHours;
+    private String isLate;
+    private String isEarlyLeave;
+    private Double workHours; 
 }
-

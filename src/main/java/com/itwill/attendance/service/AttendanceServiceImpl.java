@@ -1,139 +1,136 @@
 package com.itwill.attendance.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.time.LocalDate;
 
-import org.springframework.stereotype.Service;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.time.Duration;
 
 import com.itwill.attendance.dto.*;
 import com.itwill.attendance.mapper.AttendanceMapper;
+
+import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class AttendanceServiceImpl implements AttendanceService {
-	
+
     private final AttendanceMapper attendanceMapper;
 
-    // [1] 사용자 출퇴근 기록 조회 + 현황
+    //사용자(사원) 전용 
+    // 1. 사원 이름 조회
     @Override
-    public List<AttendanceDetailDTO> getMyAttendanceRecord(String empId, String startDate, String endDate) {
-        return attendanceMapper.getMyAttendanceRecord(empId, startDate, endDate);
+    public String getEmployeeNameById(String empId) {
+        return attendanceMapper.selectEmployeeNameById(empId);
     }
 
-    // [2] 사용자 지각 현황 조회
+    // 2. 출퇴근 상세 조회 (단일 날짜)
     @Override
-    public List<LatenessDTO> getMyLateness(String empId, String startDate, String endDate) {
-        return attendanceMapper.getMyLateness(empId, startDate, endDate);
+    public AttendanceDetailDTO getAttendanceDetailDTO(String empId, LocalDate date) {
+        AttendanceDetailDTO dto = attendanceMapper.selectAttendanceDetail(empId, date);
+        return dto;
     }
 
-    // [3] 사용자 근무 요약 조회
+    // 3. 출퇴근 상세 조회 (기간 범위)
     @Override
-    public WorkSummaryDTO getWorkSummary(String empId, String startDate, String endDate) {
-        return attendanceMapper.getWorkSummary(empId, startDate, endDate);
-    }
-
-    // [4] 사용자 근태 항목 및 근무 형태 조회
-    @Override
-    public List<AttendanceStatusDTO> getMyAttendanceStatus(String empId, String startDate, String endDate) {
-        return attendanceMapper.getMyAttendanceStatus(empId, startDate, endDate);
-    }
-
-    // [5] 사용자 전체 휴가 내역 확인(모든 기간)
-    @Override
-    public List<LeaveHistoryDTO> getMyTotalLeaveHistory(String empId) {
-        return attendanceMapper.getMyTotalLeaveHistory(empId);
-    }
-
-    // [5-1] 사용자 특정 기간 내의 휴가 내역 
-    @Override
-    public List<LeaveHistoryDTO> getMyLeaveHistoryByDate(String empId, String startDate, String endDate) {
-    	return attendanceMapper.getMyLeaveHistoryByDate(empId, startDate, endDate);
-    }
-    
-    
-    // [6] 사용자 휴가 잔여 일수 확인
-    @Override
-    public LeaveBalanceDTO getMyLeaveBalance(String empId) {
-        return attendanceMapper.getMyLeaveBalance(empId);
-    }
-
-    // [6-1] 사용자 휴가 신청 기능
-    @Override
-    public void applyForLeave(LeaveDTO leaveDTO) {
-    	attendanceMapper.applyForLeave(leaveDTO);  // 휴가 신청 정보 DB에 저장
-    }
-    
-    
-    // [7] 관리자용 출퇴근 기록부 조회 (사원별/부서별/일자별)
-    @Override
-    public List<AttendanceDetailDTO> getAttendanceRecordsByCategory(String empId, String departmentId, String startDate, String endDate) {
-        return attendanceMapper.getAttendanceRecordsByCategory(empId, departmentId, startDate, endDate);
-    }
-
-    // [8] 관리자용 사원별 휴가 관리
-    @Override
-    public void updateLeaveDays(LeaveUpdateRequestDTO dto) {
-        attendanceMapper.updateLeaveDays(dto);
-    }
-
-    // [9] 관리자용 지각 현황 조회 및 경고
-    @Override
-    public List<LatenessDTO> getAllLatenessRecords(String empId, String departmentId, String startDate, String endDate) {
-        return attendanceMapper.getAllLatenessRecords(empId, departmentId, startDate, endDate);
-    }
-
-    // [10] 관리자용 근무 형태 및 시간 조회
-    @Override
-    public List<AttendanceStatusDTO> getAllWorkStatus(String empId, String startDate, String endDate) {
-        return attendanceMapper.getAllWorkStatus(empId, startDate, endDate);
-    }
-
-    // [11] 관리자용 근무 입력/수정/삭제 기능
-    @Override
-    public void updateAttendanceRecord(AttendanceUpdateDTO dto) {
-        attendanceMapper.updateAttendanceRecord(dto);
-    }
-
-    // [12] 관리자용 근태 종합 조회
-    @Override
-    public List<AttendanceWarningDTO> getAttendanceSummaryForAdmin(String startDate, String endDate) {
-        return attendanceMapper.getAttendanceSummaryForAdmin(startDate, endDate);
-    }
-
-    // [13] 출근 기능
-    @Override
-    public void clockIn(String empId) {
-        AttendanceDTO attendanceDTO = AttendanceDTO.builder()
-            .empId(empId)
-            .status("출근")
-            .clockIn(LocalDateTime.now())
-            .build();
-
-        attendanceMapper.insertAttendance(attendanceDTO);
-    }
-
-    // [14] 퇴근 기능
-    @Override
-    public void clockOut(String empId) {
-        AttendanceDTO attendanceDTO = AttendanceDTO.builder()
-            .empId(empId)
-            .status("퇴근")
-            .clockOut(LocalDateTime.now())
-            .build();
-
-        attendanceMapper.updateAttendance(attendanceDTO);
-    }
-
-    // [15] 출퇴근 기록 등록 기능 (출근/퇴근 자동 분기)
-    @Override
-    public void registerAttendance(AttendanceDTO attendanceDTO) {
-        if ("출근".equals(attendanceDTO.getStatus())) {
-            attendanceMapper.insertAttendance(attendanceDTO);
-        } else if ("퇴근".equals(attendanceDTO.getStatus())) {
-            attendanceMapper.updateAttendance(attendanceDTO);
+    public AttendanceDetailDTO getAttendanceDetails(String empId, LocalDate startDate, LocalDate endDate) {
+        List<AttendanceDTO> attendanceDTOList = attendanceMapper.selectAttendanceDetailsByDateRange(empId, startDate, endDate);
+        if (attendanceDTOList != null && !attendanceDTOList.isEmpty()) {
+            return attendanceDTOList.stream()
+                                    .map(AttendanceDTO::toAttendanceDetailDTO)
+                                    .findFirst()
+                                    .orElse(null);
         }
+        return null;
     }
+
+    // 4. 사용자 지각 현황
+    @Override
+    public List<LateAttendanceDTO> getLateAttendanceList(String empId, LocalDate start, LocalDate end) {
+        return attendanceMapper.selectLateAttendanceList(empId, start, end); 
+    }
+
+    // 5. 사용자 근무 이력 조회
+    @Override
+    public List<AttendanceSummaryDTO> getWorkRecords(String empId, LocalDate startDate, LocalDate endDate) {
+        List<AttendanceSummaryDTO> attendanceSummaryList = attendanceMapper.selectWorkRecordsByEmpIdAndPeriod(empId, startDate, endDate);
+        return attendanceSummaryList.stream()
+                .map(record -> AttendanceSummaryDTO.builder()
+                        .empId(record.getEmpId())
+                        .empName(record.getEmpName())
+                        .workDate(record.getWorkDate())
+                        .checkInTime(record.getCheckInTime())
+                        .checkOutTime(record.getCheckOutTime())
+                        .isLate(record.getIsLate())  
+                        .isEarlyLeave(record.getIsEarlyLeave()) 
+                        .workHours(calculateWorkHours(record.getCheckInTime(), record.getCheckOutTime())) 
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    // 근무 시간 계산
+    private Double calculateWorkHours(LocalTime checkInTime, LocalTime checkOutTime) {
+        if (checkInTime != null && checkOutTime != null) {
+            Duration duration = Duration.between(checkInTime, checkOutTime);
+            long totalMinutes = duration.toMinutes();
+            return totalMinutes / 60.0;
+        }
+        return 0.0;
+    }
+
+    // 6. 사용자 근태 항목 조회
+    @Override
+    public AttendanceDetailDTO getAttendanceDetailByEmpIdAndDate(String empId, LocalDate date) {
+        return attendanceMapper.selectAttendanceDetail(empId, date);
+    }
+
+    // 7. 휴가 내역 조회
+    @Override
+    public List<LeaveDTO> getLeaveHistory(String empId, LocalDate startDate, LocalDate endDate) {
+        return attendanceMapper.selectLeaveHistory(empId, startDate, endDate);
+    }
+
+    // 8. 잔여 휴가 일수 조회
+    @Override
+    public int getRemainingLeaveDays(String empId) {
+        return attendanceMapper.selectRemainingLeaveDays(empId);
+    }
+
+    
+    //관리자 전용
+   
+    // 관리자 전용 기간별 근무유형 출결 통계 조회
+    @Override
+    public List<WorkTypeAdminDTO> getWorkTypeByPeriodForAdmin(LocalDate startDate, LocalDate endDate) {
+        
+        return attendanceMapper.selectWorkTypeByPeriodForAdmin(startDate, endDate);
+    }
+    
+    // 관리자 전용  근무 기록 삽입
+    @Override
+    public void insertWorkRecord(WorkInputDTO workInputDTO) {
+        
+        attendanceMapper.insertWorkRecord(workInputDTO);
+    }
+    
+    // 관리자 전용 출근 기록 삽입 여부 확인 (boolean 반환)
+    @Override
+    public boolean insert(WorkInputDTO workInputDTO) {
+    	return attendanceMapper.insertWorkInput(workInputDTO) > 0;
+    }
+
+    // 관리자 전용 퇴근 기록 수정
+    @Override
+    public void updateWorkRecord(WorkInputDTO workInputDTO) {
+        attendanceMapper.updateWorkRecord(workInputDTO);
+    }
+    
+  
+
+ 
+
 
     
 }

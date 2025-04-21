@@ -2,15 +2,18 @@ package com.itwill.attendance.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import java.time.LocalDate;
 
 @Data
 @Builder
 public class LeaveDTO {
-    private String leaveId;         // 휴가 ID
-    private String empId;           // 사원 ID
-    private String requestDate;     // 신청일
-    private String startDate;       // 휴가 시작일
-    private String endDate;         // 휴가 종료일
-    private String reportFile;      // 휴가 신청 관련 보고서 파일명
-    private String approvalStatus;  // 승인 상태 (승인, 대기, 반려 등)
+	//사용자 휴가 내역 DTO(삭제하기)
+	
+    private String leaveId;    // 휴가 ID
+    private String empId;      // 사원 ID
+    private LocalDate startDate;  // 휴가 시작일
+    private LocalDate endDate;    // 휴가 종료일
+    private String leaveType; // 휴가 유형 (연차, 병가 등)
+    private String reason;    // 사유
+    private boolean isApproved; // 승인 여부
 }

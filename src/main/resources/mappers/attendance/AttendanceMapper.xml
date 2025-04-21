@@ -19,13 +19,6 @@
 	    SELECT * FROM attendance WHERE emp_id = #{empId}
 	</select>
 
-    <!-- 사용자 출퇴근 기록 (일자별 1건) -->
-    <select id="selectAttendanceDetail" resultType="com.itwill.attendance.dto.AttendanceDetailDTO">
-        SELECT * FROM ATTENDANCE
-        WHERE emp_id = #{empId}
-        AND work_date = #{date}
-    </select>
-
     <!-- 사용자 지각 현황 -->
     <select id="selectLateAttendanceList" resultType="com.itwill.attendance.dto.LateAttendanceDTO">
     SELECT

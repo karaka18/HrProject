@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Controller
+@RequestMapping("/attendance")
 public class AttendanceController {
 
     @Autowired
@@ -24,7 +25,7 @@ public class AttendanceController {
     private LeaveService leaveService;
 
     // 1. 사용자 메인 페이지 (출근 정보 + 이름 표시)
-    @RequestMapping("attendance/attendance_main")
+    @RequestMapping("/attendance_main")
     public String showMainPage(HttpSession session, Model model) {
        
     	//로그인한 사용자 정보 가져오기 
@@ -45,7 +46,7 @@ public class AttendanceController {
 
     
     // 2. 사용자 근태 항목 조회
-    @GetMapping("attendance/attendace_items")
+    @GetMapping("/attendance_items")
 	public String getAttendanceDetail(@RequestParam String empId,
 	            					@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
 	            					Model model) {
@@ -59,7 +60,7 @@ public class AttendanceController {
     
     
     // 3. 사용자 지각 현황
-    @GetMapping("attendance/attendance_late")
+    @GetMapping("/attendance_late")
     public String getLatenessList(@RequestParam String empId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
@@ -75,7 +76,7 @@ public class AttendanceController {
     
 
     // 4. 사용자 근무 조회
-    @GetMapping("attendance/attendance_summary")
+    @GetMapping("/attendance_summary")
     public String getMyWorkRecords(@RequestParam String empId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
@@ -90,7 +91,7 @@ public class AttendanceController {
 
 
     // 5. 휴가 내역 조회
-    @GetMapping("attendance/attendance-leave")
+    @GetMapping("/attendance_leave")
     public String getLeaveHistory(
         @RequestParam("startDate") String startDate,
         @RequestParam("endDate") String endDate,
@@ -106,21 +107,21 @@ public class AttendanceController {
         return "attendance/attendance_leave"; // JSP 경로
     }
 
-    // 5-1. 남은 연차 조회
-    @GetMapping("/attendance/attendance-leave")
-    public String showLeaveForm(HttpSession session, Model model) {
-        String empId = (String) session.getAttribute("empId");
-        String empName = (String) session.getAttribute("empName");
-
-        // 남은 연차 조회
-        int remainingDays = leaveService.getRemainingLeaveDays(empId);
-
-        model.addAttribute("empId", empId);
-        model.addAttribute("empName", empName);
-        model.addAttribute("remainingDays", remainingDays);
-
-        return "attendance/attendance_leave";
-    }
+//    // 5-1. 남은 연차 조회
+//    @GetMapping("/attendance_leave")
+//    public String showLeaveForm(HttpSession session, Model model) {
+//        String empId = (String) session.getAttribute("empId");
+//        String empName = (String) session.getAttribute("empName");
+//
+//        // 남은 연차 조회
+//        int remainingDays = leaveService.getRemainingLeaveDays(empId);
+//
+//        model.addAttribute("empId", empId);
+//        model.addAttribute("empName", empName);
+//        model.addAttribute("remainingDays", remainingDays);
+//
+//        return "attendance/attendance_leave";
+//    }
 
     
     

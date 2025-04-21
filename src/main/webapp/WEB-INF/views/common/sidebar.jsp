@@ -23,8 +23,11 @@
                 <span>근태관리</span>
             </a>
             <ul class="submenu ${param.menu == 'attendance' ? 'open' : ''}">
-                <li><a href="<c:url value='/attendance/daily' />">일일 근태</a></li>
-                <li><a href="<c:url value='/attendance/monthly' />">월간 근태</a></li>
+                <li><a href="<c:url value='/attendance/attendance_main' />">출퇴근 기록부 및 현황</a></li>
+                <li><a href="<c:url value='/attendance/attendance_late' />">지각 현황</a></li>
+                <li><a href="<c:url value='/attendance/attendance_summary' />">근무 조회</a></li>
+                <li><a href="<c:url value='/attendance/attendance_items' />">근태 항목 조회</a></li>
+                <li><a href="<c:url value='/attendance/attendance_leave' />">휴가 내역 조회</a></li>
             </ul>
         </li>
         <li class="menu-item ${param.menu == 'salary' ? 'active' : ''} has-submenu">

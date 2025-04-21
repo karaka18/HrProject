@@ -14,8 +14,6 @@ public interface AttendanceMapper {
     List<LeaveDTO> selectLeaveHistory(String empId, LocalDate startDate, LocalDate endDate);
 
     int selectRemainingLeaveDays(String empId);
-
-    List<AttendanceDTO> selectAttendanceDetails(String empId, LocalDate startDate, LocalDate endDate);
     
     
     //2. 사용자 지각 현황

@@ -12,22 +12,24 @@ public interface AttendanceService {
     // 사용자 지각 현황
     List<LateAttendanceDTO> getLateAttendanceList(String empId, LocalDate start, LocalDate end);
 
+    //사용자 근무 조회 
+    List<AttendanceSummaryDTO> getWorkRecords(String empId, LocalDate startDate, LocalDate endDate);
+
+    // 사용자 근태 항목 조회 
+    AttendanceDetailDTO getAttendanceDetailByEmpIdAndDate(String empId, LocalDate date);
+
+    // 출퇴근 기록 상세 조회 (날짜 범위 포함)
+    AttendanceDetailDTO getAttendanceDetails(String empId, LocalDate startDate, LocalDate endDate);
+    
     // 사원 이름 조회
     String getEmployeeNameById(String empId);
-
-    
-    // 사용자 근무 조회
-    List<AttendanceSummaryDTO> records = attendanceMapper.selectWorkRecordsByEmpIdAndPeriod(empId, startDate, endDate);
 
     // 사용자 휴가 내역 확인 및 신청
     List<LeaveDTO> getLeaveHistory(String empId, LocalDate startDate, LocalDate endDate);
     int getRemainingLeaveDays(String empId);
 
-    // 관리자 출퇴근 기록부 조회 및 현황
-    List<AttendanceDetailDTO> getAttendanceDetails(String empId, LocalDate startDate, LocalDate endDate);
-
-    // 출결 상태 조회
-    List<AttendanceSummaryDTO> getAttendanceStatus(String empId, LocalDate startDate, LocalDate endDate);
+//    // 관리자 출퇴근 기록부 조회 및 현황
+//    List<AttendanceDetailDTO> getAttendanceDetails(String empId, LocalDate startDate, LocalDate endDate);
 
     // 관리자 근무 형태 현황 조회
     List<WorkTypeAdminDTO> getWorkTypeByPeriodForAdmin(LocalDate startDate, LocalDate endDate);
@@ -39,4 +41,8 @@ public interface AttendanceService {
     void updateWorkRecord(WorkInputDTO workInputDTO);
 
     boolean insert(WorkInputDTO workInputDTO);
+   
+    
+
+
 }

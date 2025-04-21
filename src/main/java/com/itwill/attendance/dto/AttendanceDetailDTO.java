@@ -4,8 +4,10 @@ import lombok.Data;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import lombok.Builder;
 
 @Data
+@Builder
 public class AttendanceDetailDTO {
 
 	private String attendanceId; // 근태 기록 고유 ID (날짜+사번+형태 등으로 구성)
@@ -38,4 +40,7 @@ public class AttendanceDetailDTO {
     // 추가적인 상태값 (예: 결근, 지각 등)
     private String absenceType; // 결근 유형
     private String absenceReason; // 결근 사유
+    
+    private Long workMinutes; //총 근무 시간(분 단위)
+    private String lateReason; //지각 사유
 }

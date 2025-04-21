@@ -1,9 +1,14 @@
 package com.itwill.attendance.service;
 
-import com.itwill.attendance.dto.LeaveStatusDTO;
 import java.util.List;
 
+import com.itwill.attendance.dto.LeaveHistoryDTO;
+
 public interface LeaveService {
-    LeaveStatusDTO getLeaveStatusByEmpId(String empId);
-    List<LeaveStatusDTO> getAllLeaveStatuses();
+
+    List<LeaveHistoryDTO> getLeaveHistory(String empId, String startDate, String endDate);
+
+    int getRemainingLeaveDays(String empId);
+    
+    
 }

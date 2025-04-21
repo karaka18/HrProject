@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mapper namespace="com.itwill.attendance.mapper.LeaveMapper">
+
+    <!-- 특정 사원의 휴가 내역 조회 -->
+    <select id="getLeaveHistory" resultType="com.itwill.attendance.dto.LeaveHistoryDTO">
+        SELECT 
+            l.leave_id AS leaveId,
+            l.emp_id AS empId,
+            e.emp_name AS empName,
+            l.leave_type AS leaveType,
+            l.start_date AS startDate,
+            l.end_date AS endDate,
+            l.leave_reason AS leaveReason,
+            l.approval_status AS approvalStatus
+        FROM 
+            LEAVE l
+        JOIN 
+            EMPLOYEE e ON l.emp_id = e.emp_id
+        WHERE 
+            l.emp_id = #{empId}
+            AND l.start_date &gt;= #{startDate}
+            AND l.end_date &lt;= #{endDate}
+        ORDER BY 
+            l.start_date DESC
+    </select>
+
+    <!-- 사원의 총 부여된 연차 일수 조회 -->
+    <select id="getTotalGrantedLeave" resultType="Integer">
+        SELECT 
+            total_granted_leave 
+        FROM 
+            LEAVE_POLICY 
+        WHERE 
+            emp_id = #{empId}
+    </select>
+
+    <!-- 사원의 사용한 연차 일수 조회 -->
+    <select id="getUsedLeave" resultType="Integer">
+        SELECT 
+            SUM(DATEDIFF(l.end_date, l.start_date) + 1) 
+        FROM 
+            LEAVE l
+        WHERE 
+            l.emp_id = #{empId}
+            AND l.approval_status = '승인'
+    </select>
+
+</mapper>

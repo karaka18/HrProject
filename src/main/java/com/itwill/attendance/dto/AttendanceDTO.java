@@ -1,10 +1,9 @@
 package com.itwill.attendance.dto;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import java.time.Duration; 
 
 import lombok.Builder;
 import lombok.Data;
@@ -13,43 +12,52 @@ import lombok.Data;
 @Builder
 public class AttendanceDTO {
 
-    private String attendanceId;       // 근태 ID
-    private String empId;              // 사원 ID
-    private LocalDate workDate;        // 근무 일자 (LocalDate)
-    private LocalDateTime checkInTime; // 출근 시간 (LocalDateTime)
-    private LocalDateTime checkOutTime;// 퇴근 시간 (LocalDateTime)
-    private int workDays;              // 근무 일수
-    private double workHours;          // 총 근무 시간
-    private double nightWorkHour;      // 야간 근무 시간
-    private String empName;            // 사원명
-    private String departmentName;     // 부서명
-    private String isLate;             // 지각 여부
+	private String attendanceId;        // 근태 ID
+    private String empId;               // 사원 ID
+    private LocalDate workDate;         // 근무 일자
+    private LocalDateTime checkInTime;  // 출근 시간
+    private LocalDateTime checkOutTime; // 퇴근 시간
 
-    private long workMinutes;
+    private int workDays;               // 근무 일수
+    private double workHours;           // 총 근무 시간
+    private double nightWorkHour;       // 야간 근무 시간
+    private long workMinutes;           // 총 근무 시간 (분 단위)
 
-    public long getWorkMinutes() {
-        if (checkInTime != null && checkOutTime != null) {
-            return java.time.Duration.between(checkInTime, checkOutTime).toMinutes();
-        }
-        return 0;
+    private String empName;             // 사원명
+    private String departmentName;      // 부서명
+    private String isLate;              // 지각 여부 (Y/N)
+
+    private String lateReason;          // 지각 사유
+    private String absenceReason;       // 결근 사유
+
+
+    // 서버 내부에서 AttendanceDetailDTO로 변환할 때 사용
+    public AttendanceDetailDTO toAttendanceDetailDTO() {
+        return AttendanceDetailDTO.builder()
+            .attendanceId(this.attendanceId)
+            .empId(this.empId)
+            .date(java.sql.Date.valueOf(this.workDate))
+            .workDate(java.sql.Timestamp.valueOf(this.checkInTime))
+            .checkInTime(java.sql.Time.valueOf(this.checkInTime.toLocalTime()))
+            .checkOutTime(java.sql.Time.valueOf(this.checkOutTime.toLocalTime()))
+            .workDays(this.workDays)
+            .workHours(this.workHours)
+            .nightWorkHour(this.nightWorkHour)
+            .workMinutes(this.getWorkMinutes())
+            .empName(this.empName)
+            .departmentName(this.departmentName)
+            .lateReason(this.lateReason)
+            .absenceReason(this.absenceReason)
+            .createdAt(java.sql.Timestamp.valueOf(this.checkInTime))
+            .updatedAt(java.sql.Timestamp.valueOf(this.checkOutTime))
+            .build();
     }
 
-    // AttendanceDTO를 AttendanceDetailDTO로 변환하는 메서드
-    public AttendanceDetailDTO toAttendanceDetailDTO() {
-        AttendanceDetailDTO detailDTO = new AttendanceDetailDTO();
-        detailDTO.setAttendanceId(this.attendanceId);
-        detailDTO.setEmpId(this.empId);
-        detailDTO.setDate(Date.valueOf(this.workDate)); // LocalDate -> Date
-        detailDTO.setWorkDate(Timestamp.valueOf(this.checkInTime)); // LocalDateTime -> Timestamp
-        detailDTO.setWorkDays(this.workDays);
-        detailDTO.setWorkHours(this.workHours);
-        detailDTO.setCheckInTime(Time.valueOf(this.checkInTime.toLocalTime())); // LocalDateTime -> Time
-        detailDTO.setCheckOutTime(Time.valueOf(this.checkOutTime.toLocalTime())); // LocalDateTime -> Time
-        detailDTO.setNightWorkHour(this.nightWorkHour);
-        detailDTO.setCreatedAt(Timestamp.valueOf(this.checkInTime)); // 예시: 생성시간을 출근 시간으로 설정
-        detailDTO.setUpdatedAt(Timestamp.valueOf(this.checkOutTime)); // 예시: 수정시간을 퇴근 시간으로 설정
-        detailDTO.setEmpName(this.empName);
-        detailDTO.setDepartmentName(this.departmentName);
-        return detailDTO;
+    // 분 단위 근무 시간 자동 계산
+    public long getWorkMinutes() {
+        if (checkInTime != null && checkOutTime != null) {
+            return Duration.between(checkInTime, checkOutTime).toMinutes(); // Duration.between() 사용
+        }
+        return 0;
     }
 }

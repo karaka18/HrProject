@@ -10,8 +10,12 @@ public interface AttendanceService {
     AttendanceDetailDTO getAttendanceDetailDTO(String empId, LocalDate date);
     
     // 사용자 지각 현황
-    List<LatenessAdminDTO> getLateAttendanceList(String empId, LocalDate start, LocalDate end);
+    List<LateAttendanceDTO> getLateAttendanceList(String empId, LocalDate start, LocalDate end);
 
+    // 사원 이름 조회
+    String getEmployeeNameById(String empId);
+
+    
     // 사용자 근무 조회
     List<AttendanceDetailDTO> getWorkRecords(String empId, LocalDate startDate, LocalDate endDate);
 

@@ -1,5 +1,11 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!-- attendance/summary.jsp -->
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+<!-- 템플릿 include -->
+<jsp:include page="../common/header.jsp" />
+<jsp:include page="../common/admin-sidebar.jsp">
+    <jsp:param name="menu" value="attendance" />
+</jsp:include>
 <html>
 <head>
 <title>근무 기록 요약</title>
@@ -100,3 +106,4 @@ th, td {
 	</div>
 </body>
 </html>
+<jsp:include page="../common/footer2.jsp" />

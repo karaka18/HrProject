@@ -2,13 +2,14 @@ package com.itwill.attendance.mapper;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.itwill.attendance.dto.*;
 
 public interface AttendanceMapper {
 
     AttendanceDTO selectAttendanceDetail(String empId, LocalDate date);
-
-    List<LatenessAdminDTO> selectLateAttendanceList(String empId, LocalDate start, LocalDate end);
 
     List<AttendanceDTO> selectWorkRecords(String empId, LocalDate startDate, LocalDate endDate);
 
@@ -27,4 +28,11 @@ public interface AttendanceMapper {
     void updateWorkRecord(WorkInputDTO workInputDTO);
 
     int insertWorkInput(WorkInputDTO workInputDTO);
+    
+    String selectEmployeeNameById(@Param("empId") String empId);
+    
+    //2. 사용자 지각 현황
+    List<LateAttendanceDTO> selectLateAttendanceList(@Param("empId") String empId,
+    												@Param("start") LocalDate start,
+    												@Param("end") LocalDate end);
 }

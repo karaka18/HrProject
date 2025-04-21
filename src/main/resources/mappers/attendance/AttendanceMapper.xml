@@ -27,20 +27,37 @@
     </select>
 
     <!-- 사용자 지각 현황 -->
-    <select id="selectLateAttendancesByEmpId" resultType="com.itwill.attendance.dto.LatenessAdminDTO">
-        SELECT 
-            a.attendance_id,
-            a.emp_id,
-            a.work_date,
-            a.check_in_time,
-            e.emp_name,
-            d.dep_name AS departmentName
-        FROM attendance a
-        JOIN employee e ON a.emp_id = e.emp_id
-        JOIN department d ON e.dep_id = d.dep_id
-        WHERE a.emp_id = #{empId}
-          AND a.check_in_time IS NOT NULL
-    </select>
+    <select id="selectLateAttendanceList" resultType="com.itwill.attendance.dto.LateAttendanceDTO">
+    SELECT
+        a.attendance_id,
+        e.emp_id,
+        e.emp_name,
+        d.dep_name AS department_name,
+        a.work_date,
+        a.check_in_time,
+
+        CASE 
+            WHEN TIME(a.check_in_time) > '09:00:00' THEN 'Y'
+            ELSE 'N'
+        END AS is_late,
+
+        a.work_date AS late_date,
+        TIMEDIFF(a.check_in_time, '09:00:00') AS late_duration,
+
+        r.reason_content AS late_reason,
+        r.status
+
+    FROM attendance a
+    JOIN employee e ON a.emp_id = e.emp_id
+    JOIN department d ON e.dep_id = d.dep_id
+    LEFT JOIN reason r ON a.attendance_id = r.attendance_id
+
+    WHERE a.emp_id = #{empId}
+      AND a.work_date BETWEEN #{start} AND #{end}
+      AND TIME(a.check_in_time) > '09:00:00'
+</select>
+
+
 
     <!-- 사용자 근무 조회 -->
     <select id="selectWorkRecordsByEmpIdAndPeriod" resultType="com.itwill.attendance.dto.AttendanceStatusDTO">
@@ -167,4 +184,10 @@
 
             
             </select>
-        </mapper>
+            
+        <select id="selectEmployeeNameById" resultType="String">
+		    SELECT emp_name
+		    FROM employee
+		    WHERE emp_id = #{empId}
+		</select>
+</mapper>

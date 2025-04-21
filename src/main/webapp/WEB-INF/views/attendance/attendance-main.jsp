@@ -78,7 +78,7 @@
         </div>
 
         <div class="attendance-times">
-            <p>📌 오늘의 출근 시간:
+            <p>오늘의 출근 시간:
                 <c:choose>
                     <c:when test="${not empty todayAttendance.checkInTime}">
                         ${todayAttendance.checkInTime}
@@ -86,7 +86,7 @@
                     <c:otherwise>--:--</c:otherwise>
                 </c:choose>
             </p>
-            <p>📌 오늘의 퇴근 시간:
+            <p>오늘의 퇴근 시간:
                 <c:choose>
                     <c:when test="${not empty todayAttendance.checkOutTime}">
                         ${todayAttendance.checkOutTime}

@@ -6,17 +6,17 @@ import com.itwill.attendance.dto.*;
 
 public interface AttendanceMapper {
 
-    AttendanceDetailDTO selectAttendanceDetail(String empId, LocalDate date);
+    AttendanceDTO selectAttendanceDetail(String empId, LocalDate date);
 
     List<LatenessAdminDTO> selectLateAttendanceList(String empId, LocalDate start, LocalDate end);
 
-    List<AttendanceDetailDTO> selectWorkRecords(String empId, LocalDate startDate, LocalDate endDate);
+    List<AttendanceDTO> selectWorkRecords(String empId, LocalDate startDate, LocalDate endDate);
 
     List<LeaveDTO> selectLeaveHistory(String empId, LocalDate startDate, LocalDate endDate);
 
     int selectRemainingLeaveDays(String empId);
 
-    List<AttendanceDetailDTO> selectAttendanceDetails(String empId, LocalDate startDate, LocalDate endDate);
+    List<AttendanceDTO> selectAttendanceDetails(String empId, LocalDate startDate, LocalDate endDate);
 
     List<AttendanceStatusDTO> selectAttendanceStatus(String empId, LocalDate startDate, LocalDate endDate);
 

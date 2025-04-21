@@ -5,10 +5,10 @@ import java.util.List;
 import com.itwill.attendance.dto.*;
 
 public interface AttendanceService {
-    
-    // 사용자 출퇴근 기록부 및 현황
-    AttendanceDetailDTO getDailyAttendance(String empId, LocalDate date);
 
+    // 사용자 출퇴근 기록부 및 현황
+    AttendanceDetailDTO getAttendanceDetailDTO(String empId, LocalDate date);
+    
     // 사용자 지각 현황
     List<LatenessAdminDTO> getLateAttendanceList(String empId, LocalDate start, LocalDate end);
 

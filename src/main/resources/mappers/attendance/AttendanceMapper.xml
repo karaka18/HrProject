@@ -4,6 +4,21 @@
 
 <mapper namespace="com.itwill.attendance.mapper.AttendanceMapper">
 
+	<insert id="insertAttendance">
+    	INSERT INTO attendance (emp_id, check_in_time) 
+	    VALUES (#{empId}, #{checkInTime});
+	</insert>
+	
+	<update id="updateCheckOutTime">
+	    UPDATE attendance
+	    SET check_out_time = #{checkOutTime}
+	    WHERE emp_id = #{empId} AND check_in_time IS NOT NULL AND check_out_time IS NULL;
+	</update>
+	
+	<select id="getAttendanceDetail" resultType="com.itwill.attendance.dto.AttendanceDTO">
+	    SELECT * FROM attendance WHERE emp_id = #{empId}
+	</select>
+
     <!-- 사용자 출퇴근 기록 (일자별 1건) -->
     <select id="selectAttendanceDetail" resultType="com.itwill.attendance.dto.AttendanceDetailDTO">
         SELECT * FROM ATTENDANCE

@@ -30,7 +30,8 @@ public class AttendanceController {
     public String getDailyAttendance(@RequestParam String empId,
                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                                      Model model) {
-        AttendanceDetailDTO detail = attendanceService.getDailyAttendance(empId, date);
+        // AttendanceDetailDTO를 가져와서 바로 사용
+        AttendanceDetailDTO detail = attendanceService.getAttendanceDetailDTO(empId, date);
         model.addAttribute("attendanceDetail", detail);
         return "attendance/attendanceDetail";
     }
@@ -41,7 +42,6 @@ public class AttendanceController {
                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
                                      Model model) {
-        // getLateAttendanceList() 메소드가 이제 List<LatenessAdminDTO>를 반환합니다.
         List<LatenessAdminDTO> latenessList = attendanceService.getLateAttendanceList(empId, start, end);
         model.addAttribute("lateAttendances", latenessList);
         return "attendance/lateAttendanceList";
@@ -55,13 +55,26 @@ public class AttendanceController {
                                   Model model) {
         List<AttendanceDetailDTO> attendanceDetails = attendanceService.getAttendanceDetails(empId, start, end);
 
-        // AttendanceDetailDTO를 WorkRecordDTO로 변환
+        // AttendanceDetailDTO의 Time -> LocalDateTime으로 변환 필요
         List<WorkRecordDTO> workList = attendanceDetails.stream()
-                .map(attendance -> new WorkRecordDTO(
-                        attendance.getEmpId(),
-                        attendance.getCheckInTime(),
-                        attendance.getCheckOutTime(),
-                        attendance.getWorkMinutes()))
+                .map(att -> {
+                    LocalDateTime checkIn = null;
+                    LocalDateTime checkOut = null;
+                    long minutes = 0;
+
+                    if (att.getCheckInTime() != null) {
+                        checkIn = LocalDateTime.of(att.getDate().toLocalDate(), att.getCheckInTime().toLocalTime());
+                    }
+                    if (att.getCheckOutTime() != null) {
+                        checkOut = LocalDateTime.of(att.getDate().toLocalDate(), att.getCheckOutTime().toLocalTime());
+                    }
+
+                    if (checkIn != null && checkOut != null) {
+                        minutes = java.time.Duration.between(checkIn, checkOut).toMinutes();
+                    }
+
+                    return new WorkRecordDTO(att.getEmpId(), checkIn, checkOut, minutes);
+                })
                 .collect(Collectors.toList());
 
         long totalMinutes = workList.stream().mapToLong(WorkRecordDTO::getWorkMinutes).sum();
@@ -117,7 +130,7 @@ public class AttendanceController {
 
         // AttendanceService에 데이터를 전달하여 작업 수행
         boolean isInserted = attendanceService.insert(workInputDTO); // insert 메서드 호출
-        
+
         if (isInserted) {
             model.addAttribute("message", "근무 정보가 성공적으로 입력되었습니다.");
         } else {

@@ -62,16 +62,29 @@ public class AttendanceController {
 	// JSP 페이지로 이동
 	return "attendance/attendance_late";
 	}
+    
 
-    // 4. 개인 근무 조회
-    @GetMapping("/records")
+    // 4. 사용자 근무 조회
+    @GetMapping("attendance/attendance_summary")
     public String getMyWorkRecords(@RequestParam String empId,
-                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-                                   Model model) {
-        List<AttendanceDetailDTO> records = attendanceService.getWorkRecords(empId, startDate, endDate);
-        model.addAttribute("records", records);
-        return "attendance/records";
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            Model model) {
+	List<AttendanceDetailDTO> records = attendanceService.getWorkRecords(empId, startDate, endDate);
+	
+	int totalWorkDays = records.size();
+	double totalWorkHours = records.stream()
+	                .filter(r -> r.getWorkHours() != null)
+	                .mapToDouble(AttendanceDetailDTO::getWorkHours)
+	                .sum();
+	
+	model.addAttribute("attendanceSummaryList", records); // 변경된 이름
+	model.addAttribute("totalWorkDays", totalWorkDays);
+	model.addAttribute("totalWorkHours", totalWorkHours);
+
+ 
+	        
+        return "attendance/attendance_summary";
     }
 
     // 5. 휴가 내역 조회
@@ -109,7 +122,7 @@ public class AttendanceController {
                                       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                                       Model model) {
-        List<AttendanceStatusDTO> statusList = attendanceService.getAttendanceStatus(empId, startDate, endDate);
+        List<AttendanceSummaryDTO> statusList = attendanceService.getAttendanceStatus(empId, startDate, endDate);
         model.addAttribute("statusList", statusList);
         return "attendance/status";
     }

@@ -44,14 +44,24 @@ public class AttendanceServiceImpl implements AttendanceService {
 //        return attendanceMapper.selectLateAttendanceList(empId, start, end);
 //    }
 
-    //  3. 근무 내역 조회
+    //  3. 사용자 근무 조회
     @Override
-    public List<AttendanceDetailDTO> getWorkRecords(String empId, LocalDate startDate, LocalDate endDate) {
-        List<AttendanceDTO> attendanceDTOList = attendanceMapper.selectAttendanceDetails(empId, startDate, endDate);
-        return attendanceDTOList.stream()
-                .map(AttendanceDTO::toAttendanceDetailDTO)
+    public List<AttendanceSummaryDTO> getWorkRecords(String empId, LocalDate startDate, LocalDate endDate) {
+        List<AttendanceSummaryDTO> attendanceSummaryList = attendanceMapper.selectWorkRecordsByEmpIdAndPeriod(empId, startDate, endDate);
+        return attendanceSummaryList.stream()
+                .map(record -> AttendanceSummaryDTO.builder()
+                        .empId(record.getEmpId())
+                        .empName(record.getEmpName())
+                        .workDate(record.getWorkDate())
+                        .checkInTime(record.getCheckInTime())
+                        .checkOutTime(record.getCheckOutTime())
+                        .isLate(record.getIsLate())  
+                        .isEarlyLeave(record.getIsEarlyLeave()) 
+                        .workHours(calculateWorkHours(record.getCheckInTime(), record.getCheckOutTime())) 
+                        .build())
                 .collect(Collectors.toList());
     }
+
     
     
 
@@ -69,7 +79,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     //  6. 출결 상태 통계
     @Override
-    public List<AttendanceStatusDTO> getAttendanceStatus(String empId, LocalDate startDate, LocalDate endDate) {
+    public List<AttendanceSummaryDTO> getAttendanceStatus(String empId, LocalDate startDate, LocalDate endDate) {
         return attendanceMapper.selectAttendanceStatus(empId, startDate, endDate);
     }
 

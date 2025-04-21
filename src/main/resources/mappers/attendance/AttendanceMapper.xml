@@ -60,19 +60,28 @@
 
 
     <!-- 사용자 근무 조회 -->
-    <select id="selectWorkRecordsByEmpIdAndPeriod" resultType="com.itwill.attendance.dto.AttendanceStatusDTO">
-        SELECT 
-            a.work_date,
-            a.check_in_time,
-            a.check_out_time,
-            a.emp_id,
-            e.emp_name
-        FROM attendance a
-        JOIN employee e ON a.emp_id = e.emp_id
-        WHERE a.emp_id = #{empId}
-          AND a.work_date BETWEEN #{startDate} AND #{endDate}
-        ORDER BY a.work_date
-    </select>
+    <select id="selectWorkRecordsByEmpIdAndPeriod" resultType="com.itwill.attendance.dto.AttendanceSummaryDTO">
+	    SELECT 
+	        a.work_date,
+	        a.check_in_time,
+	        a.check_out_time,
+	        a.emp_id,
+	        e.emp_name
+	    FROM attendance a
+	    JOIN employee e ON a.emp_id = e.emp_id
+	    WHERE a.emp_id = #{empId}
+	      AND a.work_date BETWEEN #{startDate} AND #{endDate}
+	    ORDER BY a.work_date
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
     <!-- 사용자 근태 항목 -->
     <select id="selectAttendanceStatusByEmpIdAndPeriod" resultType="com.itwill.attendance.dto.AttendanceStatusDTO">

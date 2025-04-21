@@ -19,7 +19,11 @@ public interface AttendanceMapper {
 
     List<AttendanceDTO> selectAttendanceDetails(String empId, LocalDate startDate, LocalDate endDate);
 
-    List<AttendanceStatusDTO> selectAttendanceStatus(String empId, LocalDate startDate, LocalDate endDate);
+    //3. 사용자 근무 조회
+    List<AttendanceSummaryDTO> selectWorkRecordsByEmpIdAndPeriod(@Param("empId") String empId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
 
     List<WorkTypeAdminDTO> selectWorkTypeByPeriodForAdmin(LocalDate startDate, LocalDate endDate);
 

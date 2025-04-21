@@ -4,350 +4,152 @@
 
 <mapper namespace="com.itwill.attendance.mapper.AttendanceMapper">
 
-	<!-- 사용자 출퇴근 기록부 , 현황 -->
-	<select id="selectAttendanceDetail" resultType="com.itwill.attendance.dto.AttendanceDetailDTO">
-    SELECT 
-        a.attendance_id,
-        a.emp_id,
-        a.work_date,
-        a.check_in_time,
-        a.check_out_time,
-        a.work_days,
-        a.work_hours,
-        a.night_work_hour,
-        e.emp_name,
-        d.dep_name AS departmentName
-    FROM attendance a
-    JOIN employee e ON a.emp_id = e.emp_id
-    JOIN department d ON e.dep_id = d.dep_id
-    WHERE a.emp_id = #{empId}
-      AND a.work_date = #{date}
-</select>
-
-	<!-- 사용자 지각 현황 -->
-	<select id="selectLateAttendancesByEmpId" resultType="com.itwill.attendance.dto.LateAttendanceDTO">
-    SELECT 
-        a.attendance_id,
-        a.emp_id,
-        a.work_date,
-        a.check_in_time,
-        e.emp_name,
-        d.dep_name AS departmentName
-    FROM attendance a
-    JOIN employee e ON a.emp_id = e.emp_id
-    JOIN department d ON e.dep_id = d.dep_id
-    WHERE a.emp_id = #{empId}
-      AND a.check_in_time IS NOT NULL
-</select>
-	
-	<!-- 사용자 근무 조회 -->
-	<select id="selectWorkRecordsByEmpIdAndPeriod" resultType="com.itwill.attendance.dto.WorkRecordDTO">
-    SELECT 
-        a.work_date,
-        a.check_in_time,
-        a.check_out_time,
-        a.emp_id,
-        e.emp_name
-    FROM attendance a
-    JOIN employee e ON a.emp_id = e.emp_id
-    WHERE a.emp_id = #{empId}
-      AND a.work_date BETWEEN #{startDate} AND #{endDate}
-      AND a.check_in_time IS NOT NULL
-      AND a.check_out_time IS NOT NULL
-    ORDER BY a.work_date
-</select>
-
-
-<!-- 사용자 근태 항목 -->
-<select id="selectAttendanceStatusByEmpIdAndPeriod" resultType="com.itwill.attendance.dto.AttendanceStatusDTO">
-    SELECT 
-        a.emp_id,
-        CASE
-            WHEN a.check_in_time IS NOT NULL AND a.check_out_time IS NOT NULL THEN '근무'
-            WHEN a.check_in_time IS NOT NULL AND a.check_out_time IS NULL THEN '지각'
-            WHEN a.check_in_time IS NULL AND a.check_out_time IS NULL AND b.absence_type = '결근' THEN '결근'
-            WHEN b.leave_id IS NOT NULL THEN '휴가'
-            WHEN b.business_id IS NOT NULL THEN '출장'
-            ELSE '기타'
-        END AS status,
-        b.reason,
-        b.start_date,
-        b.end_date
-    FROM attendance a
-    LEFT JOIN absence b ON a.emp_id = b.emp_id AND a.work_date = b.work_date
-    LEFT JOIN leave c ON a.emp_id = c.emp_id AND a.work_date BETWEEN c.start_date AND c.end_date
-    LEFT JOIN business d ON a.emp_id = d.emp_id AND a.work_date BETWEEN d.start_date AND d.end_date
-    WHERE a.emp_id = #{empId}
-    AND a.work_date BETWEEN #{startDate} AND #{endDate}
-    ORDER BY a.work_date
-</select>
-
-	<!-- 휴가 내역 조회 -->
-<select id="selectLeaveHistoryByEmpIdAndPeriod" resultType="com.itwill.attendance.dto.LeaveDTO">
-    SELECT 
-        leave_id, 
-        emp_id, 
-        start_date, 
-        end_date, 
-        leave_type, 
-        reason, 
-        is_approved
-    FROM leave
-    WHERE emp_id = #{empId}
-    AND start_date BETWEEN #{startDate} AND #{endDate}
-</select>
-
-<!-- 잔여 휴가 일수 조회 -->
-<select id="selectRemainingLeaveDays" resultType="int">
-    SELECT 
-        SUM(DATEDIFF(end_date, start_date) + 1) 
-    FROM leave 
-    WHERE emp_id = #{empId} 
-    AND is_approved = 1
-</select>
-	
-	
-	
-	<!-- 관리자 출퇴근 기록부 조회 -->
-	<!-- 출퇴근 기록 조회 -->
-<select id="selectAttendanceDetails" resultType="com.itwill.attendance.dto.AttendanceDetailDTO">
-    SELECT 
-        a.attendance_id,
-        a.emp_id,
-        e.emp_name,
-        d.dep_name,
-        a.check_in_time,
-        a.check_out_time,
-        a.work_days,
-        a.work_hours,
-        a.night_work_hour
-    FROM attendance a
-    JOIN employee e ON a.emp_id = e.emp_id
-    JOIN department d ON e.dep_id = d.dep_id
-    WHERE a.check_in_time BETWEEN #{startDate} AND #{endDate}
-</select>
-
-<!-- 사원별 출퇴근 기록 조회 -->
-<select id="selectAttendanceDetailByEmpIdAndDate" resultType="com.itwill.attendance.dto.AttendanceDetailDTO">
-    SELECT 
-        a.attendance_id,
-        a.emp_id,
-        e.emp_name,
-        d.dep_name,
-        a.check_in_time,
-        a.check_out_time,
-        a.work_days,
-        a.work_hours,
-        a.night_work_hour
-    FROM attendance a
-    JOIN employee e ON a.emp_id = e.emp_id
-    JOIN department d ON e.dep_id = d.dep_id
-    WHERE a.emp_id = #{empId} AND a.work_date = #{date}
-</select>
-	
-	
-	<!-- 관리자 휴가 일수 조회 -->
-	<!-- 사원별 휴가 상태 조회 -->
-<select id="selectLeaveStatusByEmpId" resultType="com.itwill.attendance.dto.LeaveStatusDTO">
-    SELECT
-        e.emp_id,
-        e.emp_name,
-        d.dep_name,
-        COALESCE(SUM(l.leave_days), 0) AS used_leave_days,
-        (SELECT total_leave_days FROM employee WHERE emp_id = #{empId}) AS total_leave_days
-    FROM employee e
-    LEFT JOIN leave l ON e.emp_id = l.emp_id
-    JOIN department d ON e.dep_id = d.dep_id
-    WHERE e.emp_id = #{empId}
-    GROUP BY e.emp_id, e.emp_name, d.dep_name
-</select>
-
-<!-- 전체 사원 휴가 상태 조회 -->
-<select id="selectAllLeaveStatuses" resultType="com.itwill.attendance.dto.LeaveStatusDTO">
-    SELECT
-        e.emp_id,
-        e.emp_name,
-        d.dep_name,
-        COALESCE(SUM(l.leave_days), 0) AS used_leave_days,
-        (SELECT total_leave_days FROM employee WHERE emp_id = e.emp_id) AS total_leave_days
-    FROM employee e
-    LEFT JOIN leave l ON e.emp_id = l.emp_id
-    JOIN department d ON e.dep_id = d.dep_id
-    GROUP BY e.emp_id, e.emp_name, d.dep_name
-</select>
-	
-	<!-- 관리자 지각 조회 -->
-	<select id="selectLatenessByPeriodForAdmin" resultType="com.itwill.attendance.dto.LatenessAdminDTO">
-    SELECT a.emp_id, e.emp_name, d.dep_name AS department_name, a.work_date AS late_date,
-           TIMESTAMPDIFF(MINUTE, a.check_in_time, '09:00:00') AS late_duration,
-           a.late_reason, a.status
-    FROM attendance a
-    JOIN employee e ON a.emp_id = e.emp_id
-    JOIN department d ON e.dep_id = d.dep_id
-    WHERE a.check_in_time > '09:00:00'
-    AND a.work_date BETWEEN #{startDate} AND #{endDate}
-    <if test="empId != null">
-        AND a.emp_id = #{empId}
-    </if>
-    <if test="depId != null">
-        AND e.dep_id = #{depId}
-    </if>
-</select>
-	
-	<!-- 관리자 근무 형태 현황 조회 -->
-	<select id="selectWorkTypeByPeriodForAdmin" resultType="com.itwill.attendance.dto.WorkTypeAdminDTO">
-    SELECT a.emp_id, e.emp_name, d.dep_name AS department_name, a.work_date, 
-           a.work_type, a.absence_reason AS reason
-    FROM attendance a
-    JOIN employee e ON a.emp_id = e.emp_id
-    JOIN department d ON e.dep_id = d.dep_id
-    WHERE a.work_date BETWEEN #{startDate} AND #{endDate}
-    <if test="empId != null">
-        AND a.emp_id = #{empId}
-    </if>
-    <if test="depId != null">
-        AND e.dep_id = #{depId}
-    </if>
-</select>
-	
-	<!-- 관리자 근무 입력 -->
-	<insert id="insertWorkRecord" parameterType="com.itwill.attendance.dto.WorkInputDTO">
-    INSERT INTO attendance (emp_id, work_date, check_in_time, check_out_time, work_type, absence_reason)
-    VALUES (#{empId}, CURDATE(), #{checkInTime}, #{checkOutTime}, #{workType}, #{absenceReason})
-</insert>
-
-<update id="updateWorkRecord" parameterType="com.itwill.attendance.dto.WorkInputDTO">
-    UPDATE attendance
-    SET check_in_time = #{checkInTime},
-        check_out_time = #{checkOutTime},
-        work_type = #{workType},
-        absence_reason = #{absenceReason}
-    WHERE emp_id = #{empId} AND work_date = CURDATE()
-</update>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-    <!-- 오늘 출근 여부 확인 -->
-    <select id="hasCheckedInToday" resultType="boolean">
-        SELECT COUNT(*) > 0
-        FROM attendance
+    <!-- 사용자 출퇴근 기록 (일자별 1건) -->
+    <select id="selectAttendanceDetail" resultType="com.itwill.attendance.dto.AttendanceDetailDTO">
+        SELECT * FROM ATTENDANCE
         WHERE emp_id = #{empId}
-          AND DATE(work_date) = CURRENT_DATE()
+        AND work_date = #{date}
     </select>
 
-    <!-- 출근 기록 삽입 -->
-    <insert id="insertAttendance" parameterType="com.itwill.attendance.dto.AttendanceDTO">
-        INSERT INTO attendance (
-            attendance_id, emp_id, work_date, check_in_time, created_at
-        )
-        VALUES (
-            #{attendanceId}, #{empId}, #{workDate}, #{checkInTime}, #{createdAt}
-        )
-    </insert>
-
-    <!-- 퇴근 시간 업데이트 -->
-    <update id="updateClockOut">
-        UPDATE attendance
-        SET check_out_time = #{now}, updated_at = CURRENT_TIMESTAMP
-        WHERE emp_id = #{empId}
-          AND DATE(work_date) = CURRENT_DATE()
-    </update>
-
-    <!-- 오늘 출근한 기록 조회 -->
-    <select id="selectTodayAttendance" parameterType="string" resultType="com.itwill.attendance.dto.AttendanceDTO">
-        SELECT *
-        FROM attendance
-        WHERE emp_id = #{empId}
-          AND DATE(work_date) = CURRENT_DATE()
+    <!-- 사용자 지각 현황 -->
+    <select id="selectLateAttendancesByEmpId" resultType="com.itwill.attendance.dto.LatenessAdminDTO">
+        SELECT 
+            a.attendance_id,
+            a.emp_id,
+            a.work_date,
+            a.check_in_time,
+            e.emp_name,
+            d.dep_name AS departmentName
+        FROM attendance a
+        JOIN employee e ON a.emp_id = e.emp_id
+        JOIN department d ON e.dep_id = d.dep_id
+        WHERE a.emp_id = #{empId}
+          AND a.check_in_time IS NOT NULL
     </select>
 
-    <!-- 날짜별 상세 조회 -->
-    <select id="getAttendanceDetail" resultType="com.itwill.attendance.dto.AttendanceDetailDTO">
-        SELECT *
-        FROM attendance
-        WHERE emp_id = #{empId}
-          AND DATE(work_date) = #{date}
+    <!-- 사용자 근무 조회 -->
+    <select id="selectWorkRecordsByEmpIdAndPeriod" resultType="com.itwill.attendance.dto.AttendanceStatusDTO">
+        SELECT 
+            a.work_date,
+            a.check_in_time,
+            a.check_out_time,
+            a.emp_id,
+            e.emp_name
+        FROM attendance a
+        JOIN employee e ON a.emp_id = e.emp_id
+        WHERE a.emp_id = #{empId}
+          AND a.work_date BETWEEN #{startDate} AND #{endDate}
+        ORDER BY a.work_date
     </select>
-    
-    <select id="selectLatenessByPeriodForAdmin" resultType="com.itwill.attendance.dto.LatenessAdminDTO">
-    SELECT 
-        e.emp_id,
-        e.emp_name,
-        d.dep_name,
-        a.attendance_date,
-        a.arrival_time,
-        a.status,
-        TIMESTAMPDIFF(MINUTE, '09:00:00', a.arrival_time) AS late_minutes
-    FROM 
-        ATTENDANCE a
-    JOIN 
-        EMPLOYEE e ON a.emp_id = e.emp_id
-    JOIN 
-        DEPARTMENT d ON e.dep_id = d.dep_id
-    WHERE 
-        a.attendance_date BETWEEN #{startDate} AND #{endDate}
-        AND a.status = '지각'
-    ORDER BY 
-        a.attendance_date, e.emp_id
-</select>
-    
-    <!-- AttendanceMapper.xml -->
-<select id="selectWorkTypeByPeriodForAdmin" resultType="com.itwill.attendance.dto.WorkTypeAdminDTO">
-    SELECT 
-        e.emp_id,
-        e.emp_name,
-        d.dep_name,
-        a.attendance_date,
-        a.status
-    FROM 
-        ATTENDANCE a
-    JOIN 
-        EMPLOYEE e ON a.emp_id = e.emp_id
-    JOIN 
-        DEPARTMENT d ON e.dep_id = d.dep_id
-    WHERE 
-        a.attendance_date BETWEEN #{startDate} AND #{endDate}
-    ORDER BY 
-        a.attendance_date, e.emp_id
-</select>
-    
-    
-    <!-- insertWorkRecord -->
-<insert id="insertWorkRecord" parameterType="com.itwill.attendance.dto.WorkInputDTO">
-    INSERT INTO ATTENDANCE (
-        emp_id, attendance_date, check_in_time, check_out_time, status
-    )
-    VALUES (
-        #{empId}, #{attendanceDate}, #{checkInTime}, #{checkOutTime}, #{status}
-    )
-</insert>
 
-<!-- updateWorkRecord -->
-<update id="updateWorkRecord" parameterType="com.itwill.attendance.dto.WorkInputDTO">
-    UPDATE ATTENDANCE
-    SET 
-        check_in_time = #{checkInTime},
-        check_out_time = #{checkOutTime},
-        status = #{status}
-    WHERE 
-        emp_id = #{empId}
-        AND attendance_date = #{attendanceDate}
-</update>
+    <!-- 사용자 근태 항목 -->
+    <select id="selectAttendanceStatusByEmpIdAndPeriod" resultType="com.itwill.attendance.dto.AttendanceStatusDTO">
+        SELECT 
+            a.emp_id,
+            CASE
+                WHEN a.check_in_time IS NOT NULL AND a.check_out_time IS NOT NULL THEN '근무'
+                WHEN a.check_in_time IS NOT NULL AND a.check_out_time IS NULL THEN '지각'
+                WHEN a.check_in_time IS NULL AND a.check_out_time IS NULL AND b.absence_type = '결근' THEN '결근'
+                WHEN b.leave_id IS NOT NULL THEN '휴가'
+                WHEN b.business_id IS NOT NULL THEN '출장'
+                ELSE '기타'
+            END AS status,
+            b.reason,
+            b.start_date,
+            b.end_date
+        FROM attendance a
+        LEFT JOIN absence b ON a.emp_id = b.emp_id AND a.work_date = b.work_date
+        LEFT JOIN leave c ON a.emp_id = c.emp_id AND a.work_date BETWEEN c.start_date AND c.end_date
+        LEFT JOIN business d ON a.emp_id = d.emp_id AND a.work_date BETWEEN d.start_date AND d.end_date
+        WHERE a.emp_id = #{empId}
+        AND a.work_date BETWEEN #{startDate} AND #{endDate}
+        ORDER BY a.work_date
+    </select>
 
-<insert id="insertWorkInput" parameterType="com.itwill.attendance.dto.WorkInputDTO">
-    INSERT INTO attendance (emp_id, check_in_time, check_out_time, work_type, absence_reason)
-    VALUES (#{empId}, #{checkInTime}, #{checkOutTime}, #{workType}, #{absenceReason})
-</insert>
+    <!-- 사용자 휴가 내역 조회 -->
+    <select id="selectLeaveHistoryByEmpIdAndPeriod" resultType="com.itwill.attendance.dto.LeaveDTO">
+        SELECT 
+            leave_id, 
+            emp_id, 
+            start_date, 
+            end_date, 
+            leave_type, 
+            reason, 
+            is_approved
+        FROM leave
+        WHERE emp_id = #{empId}
+          AND start_date BETWEEN #{startDate} AND #{endDate}
+    </select>
 
-    
+    <!-- 잔여 휴가 일수 조회 -->
+    <select id="selectRemainingLeaveDays" resultType="int">
+        SELECT 
+            SUM(DATEDIFF(end_date, start_date) + 1) 
+        FROM leave 
+        WHERE emp_id = #{empId} 
+          AND is_approved = 1
+    </select>
 
-</mapper>
+    <!-- 관리자 출퇴근 기록부 조회 -->
+    <select id="selectAttendanceDetails" resultType="com.itwill.attendance.dto.AttendanceDetailDTO">
+        SELECT 
+            a.attendance_id,
+            a.emp_id,
+            e.emp_name,
+            d.dep_name,
+            a.check_in_time,
+            a.check_out_time,
+            a.work_days,
+            a.work_hours,
+            a.night_work_hour
+        FROM attendance a
+        JOIN employee e ON a.emp_id = e.emp_id
+        JOIN department d ON e.dep_id = d.dep_id
+        WHERE a.check_in_time BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <!-- 관리자 사원별 출퇴근 기록 조회 -->
+    <select id="selectAttendanceDetailByEmpIdAndDate" resultType="com.itwill.attendance.dto.AttendanceDetailDTO">
+        SELECT 
+            a.attendance_id,
+            a.emp_id,
+            e.emp_name,
+            d.dep_name,
+            a.check_in_time,
+            a.check_out_time,
+            a.work_days,
+            a.work_hours,
+            a.night_work_hour
+        FROM attendance a
+        JOIN employee e ON a.emp_id = e.emp_id
+        JOIN department d ON e.dep_id = d.dep_id
+        WHERE a.emp_id = #{empId} AND a.work_date = #{date}
+    </select>
+
+    <!-- 관리자 사원별 휴가 상태 조회 -->
+    <select id="selectLeaveStatusByEmpId" resultType="com.itwill.attendance.dto.LeaveStatusDTO">
+        SELECT
+            e.emp_id,
+            e.emp_name,
+            d.dep_name,
+            COALESCE(SUM(l.leave_days), 0) AS used_leave_days,
+            (SELECT total_leave_days FROM employee WHERE emp_id = #{empId}) AS total_leave_days
+        FROM employee e
+        LEFT JOIN leave l ON e.emp_id = l.emp_id
+        JOIN department d ON e.dep_id = d.dep_id
+        WHERE e.emp_id = #{empId}
+        GROUP BY e.emp_id, e.emp_name, d.dep_name
+    </select>
+
+    <!-- 관리자 전체 사원 휴가 상태 조회 -->
+    <select id="selectAllLeaveStatuses" resultType="com.itwill.attendance.dto.LeaveStatusDTO">
+        SELECT
+            e.emp_id,
+            e.emp_name,
+            d.dep_name,
+            COALESCE(SUM(l.leave_days), 0) AS used_leave_days,
+            (SELECT total_leave_days FROM employee WHERE emp_id = e.emp_id) AS total_leave
+
+            
+            </select>
+        </mapper>

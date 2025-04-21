@@ -4,7 +4,7 @@ import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -25,6 +25,7 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
     private final LeaveService leaveService;
 
+    // 출근/퇴근 상세 조회
     @GetMapping("/attendance/detail")
     public String getDailyAttendance(@RequestParam String empId,
                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
@@ -34,22 +35,34 @@ public class AttendanceController {
         return "attendance/attendanceDetail";
     }
 
+    // 지각 출석 조회
     @GetMapping("/attendance/late")
     public String getLateAttendances(@RequestParam String empId,
                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
                                      Model model) {
+        // getLateAttendanceList() 메소드가 이제 List<LatenessAdminDTO>를 반환합니다.
         List<LatenessAdminDTO> latenessList = attendanceService.getLateAttendanceList(empId, start, end);
         model.addAttribute("lateAttendances", latenessList);
         return "attendance/lateAttendanceList";
     }
 
+    // 근무 기록 조회
     @GetMapping("/attendance/work-records")
     public String getWorkRecords(@RequestParam String empId,
                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
                                   Model model) {
-        List<WorkRecordDTO> workList = attendanceService.getWorkRecords(empId, start, end);
+        List<AttendanceDetailDTO> attendanceDetails = attendanceService.getAttendanceDetails(empId, start, end);
+
+        // AttendanceDetailDTO를 WorkRecordDTO로 변환
+        List<WorkRecordDTO> workList = attendanceDetails.stream()
+                .map(attendance -> new WorkRecordDTO(
+                        attendance.getEmpId(),
+                        attendance.getCheckInTime(),
+                        attendance.getCheckOutTime(),
+                        attendance.getWorkMinutes()))
+                .collect(Collectors.toList());
 
         long totalMinutes = workList.stream().mapToLong(WorkRecordDTO::getWorkMinutes).sum();
         int totalDays = workList.size();
@@ -61,6 +74,7 @@ public class AttendanceController {
         return "attendance/workRecordsList";
     }
 
+    // 출결 상태 조회
     @GetMapping("/attendance/status")
     public String getAttendanceStatus(@RequestParam String empId,
                                       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
@@ -71,6 +85,7 @@ public class AttendanceController {
         return "attendance/statusList";
     }
 
+    // 휴가 내역 조회
     @GetMapping("/attendance/leave")
     public String getLeaveHistory(@RequestParam String empId,
                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
@@ -82,7 +97,8 @@ public class AttendanceController {
         model.addAttribute("remainingLeave", remainingLeave);
         return "attendance/leaveHistory";
     }
-    
+
+    // 관리자 근무 입력
     @PostMapping("/workinput/admin")
     public String adminWorkInput(@RequestParam("empId") String empId,
                                  @RequestParam("checkInTime") String checkInTime,

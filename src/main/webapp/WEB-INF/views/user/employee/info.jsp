@@ -48,7 +48,7 @@
                 </tr>
                 <tr>
                     <td>직급 및 직책</td>
-                    <td>${employee.rankId} / ${employee.empCn}</td>
+                    <td>${employee.rankId} / ${employee.posId}</td>
                     <td>입사일자</td>
                     <td><fmt:formatDate value="${employee.empJd}" pattern="yyyy-MM-dd" /></td>
                 </tr>

@@ -30,6 +30,12 @@
             padding: 6px;
             width: 100%;
         }
+        input[readonly] {
+            background-color: #f2f2f2;
+            color: #777;
+            cursor: not-allowed;
+        }
+        
         .btn-primary {
             margin-top: 20px;
             padding: 10px 20px;

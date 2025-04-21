@@ -49,9 +49,14 @@
             if (!loginTimeStr) return;
 
             const timerEl = document.getElementById('countdown-timer');
-            const loginTime = new Date(loginTimeStr);
-            const logoutAfterMs = 60 * 60 * 1000;	// 60 * 60 * 1000
-            const expireTime = new Date(loginTime.getTime() + logoutAfterMs);
+            const logoutAfterMs = 60 * 60 * 1000;
+            let expireTime = new Date(new Date(loginTimeStr).getTime() + logoutAfterMs);
+            
+         	// 클릭 이벤트 등록 - 클릭하면 expireTime을 현재 시간 + 1시간으로 리셋
+            timerEl.addEventListener('click', function () {
+                expireTime = new Date(Date.now() + logoutAfterMs);
+                alert('세션 시간이 60분으로 연장되었습니다.');
+            });
 
             function updateTimer() {
                 const now = new Date();
@@ -66,12 +71,13 @@
 
                 const minutes = String(Math.floor(diff / (60 * 1000))).padStart(2, '0');
                 const seconds = String(Math.floor((diff % (60 * 1000)) / 1000)).padStart(2, '0');
-
                 timerEl.textContent = "로그인 남은시간 " + minutes + ":" + seconds;
             }
 
+            // 🔁 1초마다 실행
+            setInterval(() => updateTimer(), 1000);
             updateTimer();
-            setInterval(updateTimer, 1000);
+         	
         })
         .catch(function(err) {
             console.error(err);

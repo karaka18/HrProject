@@ -56,7 +56,7 @@
 	    <dependency>
 	        <groupId>org.springframework</groupId>
 	        <artifactId>spring-core</artifactId>
-	        <version>4.3.10.RELEASE</version>
+	        <version>4.3.30.RELEASE</version>
 	    </dependency>
 
 		<!-- AspectJ -->
@@ -82,8 +82,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>${org.slf4j-version}</version>
-			<scope>runtime</scope>
+			<version>1.6.6</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -131,13 +130,7 @@
 			<version>2.1</version>
 			<scope>provided</scope>
 		</dependency>
-		
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.2</version>
-		</dependency>
-
+	
 		<!-- MySQL -->
 		<dependency>
 			<groupId>com.mysql</groupId>

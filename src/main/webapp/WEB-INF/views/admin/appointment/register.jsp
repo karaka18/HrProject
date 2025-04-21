@@ -10,6 +10,8 @@
     <h2 class="mb-4">발령 등록</h2>
 
     <form action="<c:url value='/admin/appointment/register' />" method="post" class="card p-4 shadow rounded-3">
+        
+        <!-- 사원 선택 -->
         <div class="mb-3">
             <label for="empId" class="form-label">사원 선택</label>
             <select name="empId" id="empId" class="form-control" required>
@@ -20,16 +22,30 @@
             </select>
         </div>
 
+        <!-- 이동 부서 선택 -->
+        <div class="mb-3">
+            <label for="depId" class="form-label">이동 부서</label>
+            <select name="depId" id="depId" class="form-control">
+                <option value="">부서 선택</option>
+                <c:forEach var="dept" items="${departments}">
+                    <option value="${dept.depId}">${dept.depName}</option>
+                </c:forEach>
+            </select>
+        </div>
+
+        <!-- 발령 종류 -->
         <div class="mb-3">
             <label for="appCa" class="form-label">발령 종류</label>
             <input type="text" name="appCa" id="appCa" class="form-control" required />
         </div>
 
+        <!-- 발령 내용 -->
         <div class="mb-3">
             <label for="appDt" class="form-label">발령 내용</label>
             <textarea name="appDt" id="appDt" rows="4" class="form-control" required></textarea>
         </div>
 
+        <!-- 등록 버튼 -->
         <div class="text-end">
             <button type="submit" class="btn btn-primary">등록</button>
             <a href="<c:url value='/admin/appointment/list' />" class="btn btn-secondary">목록으로</a>
@@ -38,7 +54,6 @@
 </div>
 
 <jsp:include page="../../common/footer.jsp" />
-
 
 <script src="<c:url value='/resources/js/script.js' />"></script>
 <script src="<c:url value='/resources/js/session-timer.js' />"></script>

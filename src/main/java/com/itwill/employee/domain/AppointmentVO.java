@@ -19,6 +19,8 @@ public class AppointmentVO {
     private String appRegister;        // 발령자
     private Timestamp appModifydate;   // 발령 수정일자
     private String appModifier;        // 발령 수정자
+    private String depId;
 
+    
     // private EmployeeVO employee; // 연관 객체 (옵션)
 }

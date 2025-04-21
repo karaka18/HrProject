@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,7 @@ import com.itwill.employee.service.DepartmentService;
 import com.itwill.employee.service.EmployeeService;
 import com.itwill.employee.service.NoticeService;
 import com.itwill.employee.service.ResignationService;
+import com.itwill.service.MemberService;
 
 @Controller
 @RequestMapping("/user")
@@ -48,6 +50,10 @@ public class UserController {
 	@Autowired
 	private ResignationService resignationService;
 	
+	@Autowired
+	private MemberService memberService;
+
+
 
 	@GetMapping("/main")
 	public String userMain(HttpSession session, Model model) {
@@ -106,15 +112,36 @@ public class UserController {
         return "user/employee/edit";
     }
     
+
+    
     @PostMapping("/employee/update")
-    public String updateEmployee(EmployeeVO employee, HttpSession session, RedirectAttributes redirectAttributes) {
-        // 실제 로그인 적용 시 아래 코드 사용
-        String empId = (String) session.getAttribute("id");	// 로그인 하면 쓸거임
+    public String updateEmployee(EmployeeVO employee,
+                                 @RequestParam(value = "newPassword", required = false) String newPassword,
+                                 @RequestParam(value = "confirmPassword", required = false) String confirmPassword,
+                                 HttpSession session,
+                                 RedirectAttributes redirectAttributes) {
+        
+        String empId = (String) session.getAttribute("id");
+        //employee.setEmpId(empId);
 
-        // 테스트용 ID (개발 중에만 사용)
-        // String empId = "240420001";
+        // 비밀번호가 입력된 경우 처리
+        if (newPassword != null && !newPassword.isEmpty()) {
+            if (!newPassword.equals(confirmPassword)) {
+                redirectAttributes.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
+                return "redirect:/user/employee/edit";
+            }
 
-        employee.setEmpId(empId);
+            String pwPattern = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,16}$";
+            if (!newPassword.matches(pwPattern)) {
+                redirectAttributes.addFlashAttribute("error", "비밀번호는 8~16자의 영문, 숫자, 특수문자를 포함해야 합니다.");
+                return "redirect:/user/employee/edit";
+            }
+
+            // 암호화 후 저장
+            String encodedPw = new BCryptPasswordEncoder().encode(newPassword);
+            memberService.updatePassword(empId, encodedPw);
+        }
+
         employeeService.updateEmployeeUser(employee);
         redirectAttributes.addFlashAttribute("msg", "정보가 수정되었습니다.");
 

@@ -84,11 +84,55 @@
 
             <label>사진 경로:</label>
             <input type="text" name="empPht" value="${employee.empPht}" />
+            
+            <!-- 비밀번호 수정 -->
+            <label>새 비밀번호:</label>
+            <input type="password" name="newPassword" placeholder="새 비밀번호 (8~16자)" />
+
+            <label>비밀번호 확인:</label>
+            <input type="password" name="confirmPassword" placeholder="비밀번호 확인" />
         </div>
 
         <button type="submit" class="btn-primary">수정 완료</button>
     </form>
 </div>
+
+<script>
+    document.getElementById("employeeForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const newPassword = document.querySelector("input[name='newPassword']").value;
+        const confirmPassword = document.querySelector("input[name='confirmPassword']").value;
+
+        if (newPassword !== confirmPassword) {
+            alert("새 비밀번호가 일치하지 않습니다.");
+            return;
+        }
+
+        const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,16}$/;
+        if (!pwRegex.test(newPassword)) {
+            alert("비밀번호는 8~16자의 영문, 숫자, 특수문자를 모두 포함해야 합니다.");
+            return;
+        }
+
+        // 하나의 폼에서 두 가지 작업을 처리
+        const formData = new FormData(document.getElementById("employeeForm"));
+        
+        fetch("${pageContext.request.contextPath}/user/employee/update", {
+            method: "POST",
+            body: formData
+        }).then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  alert("정보 수정 완료");
+              } else {
+                  alert("정보 수정 실패");
+              }
+          }).catch(error => alert("오류 발생"));
+    });
+</script>
+
+
 
 <jsp:include page="../../common/footer.jsp" />
 

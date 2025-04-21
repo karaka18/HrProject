@@ -32,16 +32,16 @@
         INSERT INTO APPOINTMENT (
             emp_id,
             dep_id,
-            app_type,
-            app_content,
+            app_ca,
+            app_dt,
             app_register,
             app_registdate
         ) VALUES (
             #{empId},
             #{depId},
-            #{appType},
-            #{appContent},
-            #{registerId},
+            #{appCa},
+            #{appDt},
+            #{appRegister},
             NOW()
         )
     </insert>

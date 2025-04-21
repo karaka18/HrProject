@@ -51,10 +51,10 @@ public class UserController {
 
 	@GetMapping("/main")
 	public String userMain(HttpSession session, Model model) {
-	    //String empId = (String) session.getAttribute("empId");
-	    String testEmpId = "240420001";
-	    //EmployeeVO employee = employeeService.getEmployeeById(empId);
-	    EmployeeVO employee = employeeService.getEmployeeById(testEmpId);
+	    String empId = (String) session.getAttribute("id");	// 로그인 하면 쓸거임
+	    //String testEmpId = "240420001";
+	    EmployeeVO employee = employeeService.getEmployeeById(empId); // 로그인 하면 쓸거임
+	    //EmployeeVO employee = employeeService.getEmployeeById(testEmpId);
 	    
 	    System.out.println("조회된 사원: " + employee);
 	    System.out.println("employee: " + employee);
@@ -81,10 +81,10 @@ public class UserController {
     // 인사관리 - 인사조회
     @GetMapping("/employee/info")
     public String employeeInfo(HttpSession session, Model model) {
-        // String empId = (String) session.getAttribute("empId"); 로그인 하면 쓸거임
-        String testEmpId = "240420001";
-        // EmployeeVO employee = employeeService.getEmployeeById(empId); 로그인 하면 쓸거임
-        EmployeeVO employee = employeeService.getEmployeeById(testEmpId);
+        String empId = (String) session.getAttribute("id"); // 로그인 하면 쓸거임
+        // String testEmpId = "240420001";
+        EmployeeVO employee = employeeService.getEmployeeById(empId); // 로그인 하면 쓸거임
+        // EmployeeVO employee = employeeService.getEmployeeById(testEmpId);
         model.addAttribute("employee", employee);
         return "user/employee/info";
     }
@@ -92,10 +92,10 @@ public class UserController {
     // 정보 수정 페이지
     @GetMapping("/employee/edit")
     public String editEmployeeForm(HttpSession session, Model model) {
-        // String empId = (String) session.getAttribute("empId"); 로그인 하면 쓸거임
-        String testEmpId = "240420001";
-        // EmployeeVO employee = employeeService.getEmployeeById(empId); 로그인 하면 쓸거임
-        EmployeeVO employee = employeeService.getEmployeeById(testEmpId);
+        String empId = (String) session.getAttribute("id"); //로그인 하면 쓸거임
+        // String testEmpId = "240420001";
+        EmployeeVO employee = employeeService.getEmployeeById(empId); //로그인 하면 쓸거임
+        // EmployeeVO employee = employeeService.getEmployeeById(testEmpId);
         model.addAttribute("employee", employee);
         return "user/employee/edit";
     }
@@ -103,10 +103,10 @@ public class UserController {
     @PostMapping("/employee/update")
     public String updateEmployee(EmployeeVO employee, HttpSession session, RedirectAttributes redirectAttributes) {
         // 실제 로그인 적용 시 아래 코드 사용
-        // String empId = (String) session.getAttribute("empId");
+        String empId = (String) session.getAttribute("id");	// 로그인 하면 쓸거임
 
         // 테스트용 ID (개발 중에만 사용)
-        String empId = "240420001";
+        // String empId = "240420001";
 
         employee.setEmpId(empId);
         employeeService.updateEmployeeUser(employee);
@@ -122,10 +122,10 @@ public class UserController {
     // 퇴사 신청 페이지
     @GetMapping("/employee/resignation")
     public String resignationForm(HttpSession session, Model model) {
-        // String empId = (String) session.getAttribute("empId"); 로그인 하면 쓸거임
-        String testEmpId = "240420001";
-        // EmployeeVO employee = employeeService.getEmployeeById(empId); 로그인하면 쓸거임
-        EmployeeVO employee = employeeService.getEmployeeById(testEmpId);
+        String empId = (String) session.getAttribute("id"); //로그인 하면 쓸거임
+        //String testEmpId = "240420001";
+        EmployeeVO employee = employeeService.getEmployeeById(empId); //로그인하면 쓸거임
+        // EmployeeVO employee = employeeService.getEmployeeById(testEmpId);
         model.addAttribute("employee", employee);
         return "user/employee/resignation";
     }
@@ -141,8 +141,8 @@ public class UserController {
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
-        String empId = (String) session.getAttribute("empId");
-        if (empId == null) empId = "240420001"; // 테스트용
+        String empId = (String) session.getAttribute("id");
+        // if (empId == null) empId = "240420001"; // 테스트용
 
         ResignationVO resignation = new ResignationVO();
         resignation.setEmpId(empId);
@@ -174,10 +174,10 @@ public class UserController {
     // 발령 조회
     @GetMapping("/employee/appointment")
     public String appointmentInfo(HttpSession session, Model model) {
-        // String empId = (String) session.getAttribute("empId");
-        String testEmpId = "240420001";
-        // List<AppointmentVO> appointments = appointmentService.getAppointmentsByEmpId(empId);
-        List<AppointmentVO> appointments = appointmentService.getAppointmentsByEmpId(testEmpId);
+        String empId = (String) session.getAttribute("id");	// 로그인 하면 쓸거임
+        // String testEmpId = "240420001";
+        List<AppointmentVO> appointments = appointmentService.getAppointmentsByEmpId(empId);	// 로그인 하면 쓸거임
+        //List<AppointmentVO> appointments = appointmentService.getAppointmentsByEmpId(testEmpId);
         model.addAttribute("appointments", appointments);
         return "user/employee/appointment";
     }

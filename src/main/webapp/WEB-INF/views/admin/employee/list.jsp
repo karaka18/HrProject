@@ -42,10 +42,11 @@
 	        <div class="form-group">
 	            <label for="department">부서</label>
 	            <select id="department" name="department" class="form-control">
-	                <option value="01">인사팀(01)</option>
-	                <option value="02">개발팀(02)</option>
-	                <option value="03">영업팀(03)</option>
-	                <option value="04">마케팅팀(04)</option>
+	                <option value="101">총무팀(101)</option>
+	                <option value="102">인사팀(102)</option>
+	                <option value="103">개발팀(103)</option>
+	                <option value="104">영업팀(104)</option>
+	                <option value="105">마케팅팀(105)</option>
 	            </select>
 	        </div>
 	        <div class="form-group">
@@ -227,68 +228,42 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <script>
-/* document.getElementById("addEmployeeForm").addEventListener("submit", function (e) {
-    e.preventDefault(); // 기본 제출 방지
-
-    const empId = document.getElementById("empId").value;
-
-    fetch("/add", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: `empId=\${encodeURIComponent(empId)}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.message);
-            location.reload(); // 또는 새로 추가된 사원만 갱신
-        } else {
-            alert(data.message);
-        }
-    })
-    .catch(() => {
-        alert("요청 중 오류가 발생했습니다.");
-    });
-}); */
-
-document.getElementById("addEmployeeForm").addEventListener("submit", function (e) {
-    e.preventDefault(); // 기본 제출 방지
-
-    const year = new Date().getFullYear().toString();
-    const department = document.getElementById("department").value; // 부서코드
-    const empSeq = document.getElementById("empSeq").value.padStart(3, "0"); // 순번 앞자리 0채우기
-
-    const empId = year + department + empSeq; // 최종 사원번호
-    
- // URLSearchParams를 사용해 데이터를 URL 인코딩 처리
-    const params = new URLSearchParams();
-    params.append('empId', empId);
-
-    fetch("/add", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: params.toString()  // URLSearchParams로 변환된 데이터를 body로 전송
-    })
-    .then(function(response) {
-    	return response.json();
-	})
-	.then(function(data) {
-	    console.log("서버에서 받은 데이터:", data);
-	    if (data.success) {
-	        alert(data.message + "\n추가된 사원번호: " + data.empId);
-	        location.reload();
-	    } else {
-	        alert(data.message);
-	    }
-	})
-    .catch(function(err) {
-        alert("요청 중 오류가 발생했습니다.");
-    });
-});
+	document.getElementById("addEmployeeForm").addEventListener("submit", function (e) {
+	    e.preventDefault(); // 기본 제출 방지
+	
+	    const year = new Date().getFullYear().toString();
+	    const department = document.getElementById("department").value; // 부서코드
+	    const empSeq = document.getElementById("empSeq").value.padStart(3, "0"); // 순번 앞자리 0채우기
+	
+	    const empId = year + department + empSeq; // 최종 사원번호
+	    
+	 // URLSearchParams를 사용해 데이터를 URL 인코딩 처리
+	    const params = new URLSearchParams();
+	    params.append('empId', empId);
+	
+	    fetch("/add", {
+	        method: "POST",
+	        headers: {
+	            "Content-Type": "application/x-www-form-urlencoded"
+	        },
+	        body: params.toString()  // URLSearchParams로 변환된 데이터를 body로 전송
+	    })
+	    .then(function(response) {
+	    	return response.json();
+		})
+		.then(function(data) {
+		    console.log("서버에서 받은 데이터:", data);
+		    if (data.success) {
+		        alert(data.message + "\n추가된 사원번호: " + data.empId);
+		        location.reload();
+		    } else {
+		        alert(data.message);
+		    }
+		})
+	    .catch(function(err) {
+	        alert("요청 중 오류가 발생했습니다.");
+	    });
+	});
 </script>
 
 <style>

@@ -156,7 +156,7 @@ public class AdminController {
     // 발령 등록 처리
     @PostMapping("/appointment/register")
     public String appointmentRegister(@ModelAttribute AppointmentVO appointment, HttpSession session) {
-        String empId = (String) session.getAttribute("empId");
+        String empId = (String) session.getAttribute("id");
         appointment.setAppRegister(empId);
         appointmentService.registerAppointment(appointment);
         return "redirect:/admin/appointment/list";
@@ -315,7 +315,7 @@ public class AdminController {
     public String updateResignationStatus(@RequestParam("resignId") int resignId,
                                           @RequestParam("status") String status,
                                           HttpSession session) {
-        String approver = (String) session.getAttribute("empId");
+        String approver = (String) session.getAttribute("id");
         if (approver == null) approver = "admin";
 
         try {

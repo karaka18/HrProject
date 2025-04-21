@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class AttendanceStatusDTO {
+	//사용자 근태 항목 조회 DTO
 
     private String empId;       // 사원 ID (DB)
     private String status;      // 근무 상태 (근무, 지각, 결근, 휴가 등)

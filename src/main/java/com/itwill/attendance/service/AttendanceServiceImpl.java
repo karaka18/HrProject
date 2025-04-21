@@ -2,13 +2,19 @@ package com.itwill.attendance.service;
 
 import com.itwill.attendance.dto.AttendanceDTO;
 import com.itwill.attendance.dto.AttendanceDetailDTO;
+import com.itwill.attendance.dto.AttendanceStatusDTO;
+import com.itwill.attendance.dto.LatenessAdminDTO;
+import com.itwill.attendance.dto.LeaveDTO;
 import com.itwill.attendance.dto.LeaveStatusDTO;
 import com.itwill.attendance.dto.WorkInputDTO;
 import com.itwill.attendance.mapper.AttendanceMapper;
+import com.itwill.attendance.mapper.LeaveMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -21,6 +27,7 @@ import java.util.stream.Collectors;
 public class AttendanceServiceImpl implements AttendanceService {
 
     private final AttendanceMapper attendanceMapper;
+    private final LeaveMapper leaveMapper;
     
     //사용자 출퇴근 기록부 및 현황
     @Override
@@ -41,8 +48,8 @@ public class AttendanceServiceImpl implements AttendanceService {
     
     //사용자 지각 현황
     @Override
-    public List<LatenessDTO> getLateAttendanceList(String empId) {
-        List<LatenessDTO> allAttendances = attendanceMapper.selectLateAttendancesByEmpId(empId);
+    public List<LatenessAdminDTO> getLateAttendanceList(String empId) {
+        List<LatenessAdminDTO> allAttendances = attendanceMapper.selectLateAttendancesByEmpId(empId);
 
         return allAttendances.stream()
             .filter(dto -> dto.getCheckInTime() != null &&
@@ -54,11 +61,17 @@ public class AttendanceServiceImpl implements AttendanceService {
             .collect(Collectors.toList());
     }
 
+
+    @Override
+    public List<AttendanceStatusDTO> getAttendanceStatus(String empId, LocalDate startDate, LocalDate endDate) {
+        return attendanceMapper.selectAttendanceStatusByEmpIdAndPeriod(empId, startDate, endDate);
+    }
+
     
     //사용자 근무 조회
     @Override
-    public List<WorkRecordDTO> getWorkRecords(String empId, LocalDate startDate, LocalDate endDate) {
-        List<WorkRecordDTO> records = attendanceMapper.selectWorkRecordsByEmpIdAndPeriod(empId, startDate, endDate);
+    public List<AttendanceDetailDTO> getWorkRecords(String empId, LocalDate startDate, LocalDate endDate) {
+        List<AttendanceDetailDTO> records = AttendanceMapper.selectWorkRecordsByEmpIdAndPeriod(empId, startDate, endDate);
 
         return records.stream().map(record -> {
             long minutes = Duration.between(record.getCheckInTime(), record.getCheckOutTime()).toMinutes();

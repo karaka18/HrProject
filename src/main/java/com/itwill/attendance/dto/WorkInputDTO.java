@@ -8,6 +8,8 @@ import lombok.Data;
 @Data
 @Builder
 public class WorkInputDTO {
+	//관리자 근무 입력 DTO
+	
     private String empId;         // 사원 ID
     private LocalDateTime checkInTime;  // 출근 시간
     private LocalDateTime checkOutTime; // 퇴근 시간

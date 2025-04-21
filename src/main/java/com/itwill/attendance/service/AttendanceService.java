@@ -5,10 +5,12 @@ import java.util.List;
 
 import com.itwill.attendance.dto.AttendanceDetailDTO;
 import com.itwill.attendance.dto.AttendanceStatusDTO;
-import com.itwill.attendance.dto.LatenessDTO;
+import com.itwill.attendance.dto.LateAttendanceDTO;
+import com.itwill.attendance.dto.LatenessAdminDTO;
 import com.itwill.attendance.dto.LeaveDTO;
 import com.itwill.attendance.dto.LeaveStatusDTO;
 import com.itwill.attendance.dto.WorkInputDTO;
+import com.itwill.attendance.dto.WorkRecordDTO;
 import com.itwill.attendance.dto.WorkTypeAdminDTO;
 
 public interface AttendanceService{
@@ -17,10 +19,11 @@ public interface AttendanceService{
 	AttendanceDetailDTO getDailyAttendance(String empId, LocalDate date);
 
 	//사용자 지각 현황
-	List<LatenessDTO> getLateAttendanceList(String empId);
+	List<LateAttendanceDTO> getLateAttendanceList(String empId, LocalDate startDate, LocalDate endDate);
+
 	
 	//사용자 근무 조회
-	List<AttendanceDetailDTO> getWorkRecords(String empId, LocalDate startDate, LocalDate endDate);
+	List<WorkRecordDTO> getWorkRecords(String empId, LocalDate startDate, LocalDate endDate);
 
 	//사용자 근태 항목
 	List<AttendanceStatusDTO> getAttendanceStatus(String empId, LocalDate startDate, LocalDate endDate);
@@ -39,11 +42,14 @@ public interface AttendanceService{
 
 	
 	//관리자 지각 현황 조회
-	List<LatenessDTO> getLatenessByPeriodForAdmin(LocalDate startDate, LocalDate endDate);  
+	List<LatenessAdminDTO> getLatenessByPeriodForAdmin(LocalDate startDate, LocalDate endDate);  
 	
 	//관리자 근무 형태 현황 조회
 	List<WorkTypeAdminDTO> getWorkTypeByPeriodForAdmin(LocalDate startDate, LocalDate endDate);  
 	
+	//지각 분 조회
+	List<LatenessAdminDTO> getLateAttendanceList(String empId);
+
 	
 	 // 관리자 근무 입력
     void insertWorkRecord(WorkInputDTO workInputDTO);

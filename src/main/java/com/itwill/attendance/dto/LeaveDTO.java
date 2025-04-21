@@ -7,6 +7,8 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class LeaveDTO {
+	//사용자 휴가 내역 DTO
+	
     private String leaveId;    // 휴가 ID
     private String empId;      // 사원 ID
     private LocalDate startDate;  // 휴가 시작일

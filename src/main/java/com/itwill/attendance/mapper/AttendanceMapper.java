@@ -14,7 +14,7 @@ public interface AttendanceMapper {
     AttendanceDetailDTO selectAttendanceDetail(@Param("empId") String empId, @Param("date") LocalDate date);
 	
     //사용자 지각 현황
-    List<LatenessDTO> selectLateAttendancesByEmpId(String empId);
+    List<LatenessAdminDTO> selectLateAttendancesByEmpId(String empId);
 
     //사용자 근무 조회
     List<AttendanceStatusDTO> selectWorkRecordsByEmpIdAndPeriod(@Param("empId") String empId,
@@ -51,7 +51,7 @@ LeaveStatusDTO selectLeaveStatusByEmpId(String empId);
 List<LeaveStatusDTO> selectAllLeaveStatuses();
 
 //지각 현황 조회 (관리자용)
-List<LatenessDTO> selectLateDetailsForAdmin(@Param("startDate") String startDate,
+List<LatenessAdminDTO> selectLateDetailsForAdmin(@Param("startDate") String startDate,
                                             @Param("endDate") String endDate,
                                             @Param("departmentId") String departmentId);
 

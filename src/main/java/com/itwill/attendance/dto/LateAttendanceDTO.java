@@ -10,7 +10,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LatenessDTO {
+public class LateAttendanceDTO {
+	//사용자 지각 현황 조회 DTO
 
     private String attendanceId;       // 근태 ID (DB에 있음)
     private String empId;              // 사원 ID (DB에 있음)

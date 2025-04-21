@@ -14,7 +14,7 @@ import lombok.Data;
 public class LeaveHistoryDTO {
 
     private String leaveId;         // 휴가 ID (DB 있음)
-    private String empId;           // 사원 ID (DB 있음)
+    private String empId;           // 사원 ID(DB 있음)
     private String empName;         // 사원 이름 (JOIN: EMPLOYEE) ⚠️ DB에는 없음
     private String leaveType;       // 휴가 유형 (연차, 병가 등) (DB 있음)
     private String startDate;       // 휴가 시작일 (DB 있음)

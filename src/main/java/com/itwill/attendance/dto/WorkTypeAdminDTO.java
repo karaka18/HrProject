@@ -7,6 +7,8 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class WorkTypeAdminDTO {
+	//관리자 근무 형태 현황 조회 DTO
+	
     private String empId;          // 사원 ID
     private String empName;        // 사원 이름
     private String departmentName; // 부서명

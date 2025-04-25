@@ -16,13 +16,16 @@
             </ul>
         </li>
         <li class="menu-item ${param.menu == 'attendance' ? 'active' : ''} has-submenu">
-            <a href="#" class="menu-toggle">
-                <span>근태관리</span>
-            </a>
-            <ul class="submenu ${param.menu == 'attendance' ? 'open' : ''}">
-                <li><a href="<c:url value='/admin/attendance/manage' />">근태관리</a></li>
-            </ul>
-        </li>
+		    <a href="#" class="menu-toggle">
+		        <span>근태관리</span>
+		    </a>
+		    <ul class="submenu ${param.menu == 'attendance' ? 'open' : ''}">
+		        <li><a href="<c:url value='/admin/attendance/list' />">출퇴근 기록 조회</a></li>
+		        <li><a href="<c:url value='/admin/attendance/late-list' />">지각 현황</a></li>
+		        <li><a href="<c:url value='/admin/attendance/work-list' />">근무 관리</a></li>
+		        <li><a href="<c:url value='/admin/attendance/leave-list' />">휴가 내역</a></li>
+		    </ul>
+		</li>
         <li class="menu-item ${param.menu == 'salary' ? 'active' : ''} has-submenu">
             <a href="#" class="menu-toggle">
                 <span>급여관리</span>

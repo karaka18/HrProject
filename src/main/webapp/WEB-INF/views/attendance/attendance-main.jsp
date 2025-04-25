@@ -4,7 +4,7 @@
 
 <!-- 공통 템플릿 include -->
 <jsp:include page="../common/header.jsp" />
-<jsp:include page="../common/admin-sidebar.jsp">
+<jsp:include page="../common/user-sidebar.jsp">
     <jsp:param name="menu" value="attendance" />
 </jsp:include>
 <!-- 공통 템플릿 include -->

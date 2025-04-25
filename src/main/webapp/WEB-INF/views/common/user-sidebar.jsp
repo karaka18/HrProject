@@ -19,17 +19,17 @@
             </ul>
         </li>
         <li class="menu-item ${param.menu == 'attendance' ? 'active' : ''} has-submenu">
-            <a href="#" class="menu-toggle">
-                <span>근태관리</span>
-            </a>
-            <ul class="submenu ${param.menu == 'attendance' ? 'open' : ''}">
-                <li><a href="<c:url value='/attendance/attendance-main' />">출퇴근 기록부 및 현황</a></li>
-                <li><a href="<c:url value='/attendance/attendance-late' />">지각 현황</a></li>
-                <li><a href="<c:url value='/attendance/attendance-summary' />">근무 조회</a></li>
-                <li><a href="<c:url value='/attendance/attendance-items' />">근태 항목</a></li>
-                <li><a href="<c:url value='/attendance/attendance-leave' />">휴가 내역 확인</a></li>
-            </ul>
-        </li>
+		    <a href="#" class="menu-toggle">
+		        <span>근태관리</span>
+		    </a>
+		    <ul class="submenu ${param.menu == 'attendance' ? 'open' : ''}">
+		        <li><a href="<c:url value='/attendance/main' />">출퇴근 기록부 및 현황</a></li>
+		        <li><a href="<c:url value='/attendance/late' />">지각 현황</a></li>
+		        <li><a href="<c:url value='/attendance/summary' />">근무 조회</a></li>
+		        <li><a href="<c:url value='/attendance/items' />">근태 항목</a></li>
+		        <li><a href="<c:url value='/attendance/leave' />">휴가 내역 확인</a></li>
+		    </ul>
+		</li>
         <li class="menu-item ${param.menu == 'salary' ? 'active' : ''} has-submenu">
             <a href="#" class="menu-toggle">
                 <span>급여관리</span>
